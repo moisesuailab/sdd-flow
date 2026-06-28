@@ -183,6 +183,7 @@ async function init() {
   if (!shouldVersion) {
     ok('Arquivos adicionados a .git/info/exclude');
     warn('Outros desenvolvedores no projeto não terão esses arquivos.');
+    info('Rode ' + bold('git status') + ' no terminal para atualizar a visualização do editor.');
   }
 
   log();
