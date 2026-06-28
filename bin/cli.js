@@ -72,6 +72,28 @@ function removeSddCommands(commandsDest) {
   }
 }
 
+function syncGitExclude(entries, shouldExclude) {
+  const gitDir = path.join(CWD, '.git');
+  if (!fs.existsSync(gitDir)) {
+    warn('.git/ não encontrado — .git/info/exclude não configurado.');
+    return;
+  }
+
+  const excludePath = path.join(gitDir, 'info', 'exclude');
+  let content = fs.existsSync(excludePath) ? fs.readFileSync(excludePath, 'utf8') : '';
+
+  content = content.replace(/\n*# sdd-flow\n[\s\S]*?# \/sdd-flow\n*/g, '');
+  content = content.trimEnd();
+
+  if (shouldExclude) {
+    const sep = content ? '\n\n' : '';
+    content += sep + '# sdd-flow\n' + entries.join('\n') + '\n# /sdd-flow';
+  }
+
+  fs.mkdirSync(path.dirname(excludePath), { recursive: true });
+  fs.writeFileSync(excludePath, content + '\n', 'utf8');
+}
+
 async function init() {
   log();
   log(bold('sdd-cli') + dim(' — Spec Driven Development workflow'));
@@ -128,6 +150,39 @@ async function init() {
     }
   } else {
     info('Harness ignorado. Use ' + bold('sdd harness') + ' para instalar depois.');
+  }
+
+  log();
+  const docsAnswer = await ask('  Deseja criar a pasta docs/ para documentos de referência? (s/N) ');
+  const wantsDocs = docsAnswer.toLowerCase() === 's';
+
+  if (wantsDocs) {
+    const docsDir = path.join(CWD, 'docs');
+    if (fs.existsSync(docsDir)) {
+      info('docs/ já existe — preservado');
+    } else {
+      fs.mkdirSync(docsDir, { recursive: true });
+      for (const [name, header] of [['prd.md', '# PRD'], ['roadmap.md', '# Roadmap'], ['architecture.md', '# Architecture']]) {
+        fs.writeFileSync(path.join(docsDir, name), header + '\n', 'utf8');
+      }
+      ok('docs/ criado com prd.md, roadmap.md, architecture.md');
+    }
+  }
+
+  log();
+  info('Deseja versionar os arquivos do workflow?');
+  log(`  ${dim('N → arquivos ignorados via .git/info/exclude (apenas nesta máquina)')}`);
+  const versionAnswer = await ask('  Escolha (S/n) [S]: ');
+  const shouldVersion = versionAnswer.toLowerCase() !== 'n';
+
+  const excludeEntries = ['AGENTS.md', 'QUICKSTART.md', 'agents/'];
+  if (wantsDocs) excludeEntries.push('docs/');
+
+  syncGitExclude(excludeEntries, !shouldVersion);
+
+  if (!shouldVersion) {
+    ok('Arquivos adicionados a .git/info/exclude');
+    warn('Outros desenvolvedores no projeto não terão esses arquivos.');
   }
 
   log();
