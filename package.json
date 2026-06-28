@@ -1,6 +1,6 @@
 {
   "name": "sdd-flow",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Spec Driven Development workflow for AI-assisted development (SDD + RPI)",
   "bin": {
     "sdd-cli": "bin/cli.js",
