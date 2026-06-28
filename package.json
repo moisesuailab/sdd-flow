@@ -1,0 +1,32 @@
+{
+  "name": "sdd-flow",
+  "version": "1.2.4",
+  "description": "Spec Driven Development workflow for AI-assisted development (SDD + RPI)",
+  "bin": {
+    "sdd-cli": "bin/cli.js",
+    "sdd": "bin/cli.js"
+  },
+  "files": [
+    "bin/",
+    "templates/"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "sdd",
+    "spec-driven-development",
+    "rpi",
+    "ai-workflow",
+    "claude-code",
+    "opencode",
+    "agentic",
+    "workflow"
+  ],
+  "author": "moisesuailab",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moisesuailab/sdd-flow.git"
+  }
+}
