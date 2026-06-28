@@ -267,18 +267,80 @@ async function update() {
   log();
 }
 
+function nextSpecNumber(specsDir) {
+  if (!fs.existsSync(specsDir)) return '001';
+  const entries = fs.readdirSync(specsDir, { withFileTypes: true })
+    .filter(e => e.isDirectory())
+    .map(e => parseInt(e.name.slice(0, 3), 10))
+    .filter(n => !isNaN(n));
+  const max = entries.length ? Math.max(...entries) : 0;
+  return String(max + 1).padStart(3, '0');
+}
+
+function newSpec(rawName) {
+  log();
+  log(bold('sdd new'));
+  log();
+
+  const agentsDir = path.join(CWD, 'agents');
+  if (!fs.existsSync(agentsDir)) {
+    error('Pasta agents/ não encontrada. Rode ' + bold('sdd init') + ' primeiro.');
+    log();
+    process.exit(1);
+  }
+
+  if (!rawName) {
+    error('Informe o nome da feature: ' + bold('sdd new <nome-da-feature>'));
+    log('  Exemplo: ' + dim('sdd new user-authentication'));
+    log();
+    process.exit(1);
+  }
+
+  const name = rawName.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  if (!name) {
+    error('Nome inválido. Use apenas letras, números e hífens.');
+    log();
+    process.exit(1);
+  }
+
+  const specsDir = path.join(agentsDir, 'specs');
+  const num      = nextSpecNumber(specsDir);
+  const slug     = num + '-' + name;
+  const specDir  = path.join(specsDir, slug);
+
+  if (fs.existsSync(specDir)) {
+    error('Spec já existe: agents/specs/' + slug + '/');
+    log();
+    process.exit(1);
+  }
+
+  fs.mkdirSync(specDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(specDir, 'DECISIONS.md'),
+    '# DECISIONS — ' + name + '\n\n(decisões arquiteturais registradas durante o ciclo)\n'
+  );
+
+  ok('Spec criada: agents/specs/' + slug + '/');
+  log();
+  log(bold('Próximo passo — inicie a fase de Research:'));
+  log('  ' + c.cyan + '/sdd-research' + c.reset + ' ' + slug);
+  log('  ' + dim('"Leia e siga agents/prompts/rpi-research.md. Spec: ' + slug + '"'));
+  log();
+}
+
 function help() {
   log();
   log(bold('sdd-cli') + dim(' — Spec Driven Development workflow'));
   log();
   log('Uso:');
-  log(`  sdd-cli ${c.cyan}init${c.reset}       Instala o workflow no projeto atual`);
-  log(`  sdd-cli ${c.cyan}harness${c.reset}    Instala, troca ou remove o harness do agente`);
-  log(`  sdd-cli ${c.cyan}update${c.reset}     Atualiza prompts e regras, preserva dados do projeto`);
-  log(`  sdd-cli ${c.cyan}help${c.reset}       Exibe esta mensagem`);
-  log(`  sdd-cli ${c.cyan}--version${c.reset}  Exibe a versão instalada`);
+  log(`  sdd-cli ${c.cyan}init${c.reset}           Instala o workflow no projeto atual`);
+  log(`  sdd-cli ${c.cyan}new <nome>${c.reset}     Cria pasta da spec com numeração automática`);
+  log(`  sdd-cli ${c.cyan}harness${c.reset}        Instala, troca ou remove o harness do agente`);
+  log(`  sdd-cli ${c.cyan}update${c.reset}         Atualiza prompts e regras, preserva dados do projeto`);
+  log(`  sdd-cli ${c.cyan}help${c.reset}           Exibe esta mensagem`);
+  log(`  sdd-cli ${c.cyan}--version${c.reset}      Exibe a versão instalada`);
   log();
-  log(dim('  Alias: sdd init / sdd harness / sdd update / sdd help / sdd --version'));
+  log(dim('  Alias: sdd init / sdd new / sdd harness / sdd update / sdd help / sdd --version'));
   log();
   log(dim('  Documentação: https://github.com/moisesuailab/spec-driven-workflow'));
   log();
@@ -289,6 +351,9 @@ const cmd = process.argv[2];
 switch (cmd) {
   case 'init':
     init().catch(e => { error(e.message); process.exit(1); });
+    break;
+  case 'new':
+    newSpec(process.argv[3]);
     break;
   case 'harness':
     harness().catch(e => { error(e.message); process.exit(1); });
