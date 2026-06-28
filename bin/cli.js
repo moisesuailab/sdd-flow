@@ -46,6 +46,32 @@ function copyDir(src, dest, exclude = []) {
   }
 }
 
+const HARNESS_CONFIG = {
+  '2': {
+    name:         'claude-code',
+    commandsDest: path.join(CWD, '.claude', 'commands'),
+  },
+  '3': {
+    name:         'opencode',
+    commandsDest: path.join(CWD, '.opencode', 'commands'),
+  },
+};
+
+function showSlashCommands() {
+  log(bold('Slash commands disponíveis:'));
+  log(`  ${c.cyan}/sdd-research${c.reset}   001-nome-da-feature`);
+  log(`  ${c.cyan}/sdd-plan${c.reset}       001-nome-da-feature`);
+  log(`  ${c.cyan}/sdd-implement${c.reset}  001-nome-da-feature`);
+  log(`  ${c.cyan}/sdd-validate${c.reset}   001-nome-da-feature`);
+}
+
+function removeSddCommands(commandsDest) {
+  if (!fs.existsSync(commandsDest)) return;
+  for (const f of fs.readdirSync(commandsDest)) {
+    if (f.startsWith('sdd-')) fs.rmSync(path.join(commandsDest, f));
+  }
+}
+
 async function init() {
   log();
   log(bold('sdd-cli') + dim(' — Spec Driven Development workflow'));
@@ -63,40 +89,45 @@ async function init() {
     log();
   }
 
-  copy(
-    path.join(TEMPLATES, 'AGENTS.md'),
-    path.join(CWD, 'AGENTS.md')
-  );
+  copy(path.join(TEMPLATES, 'AGENTS.md'),    path.join(CWD, 'AGENTS.md'));
   ok('AGENTS.md criado na raiz do projeto');
 
-  copyDir(
-    path.join(TEMPLATES, 'agents'),
-    agentsDir,
-    ['harness']
-  );
+  copy(path.join(TEMPLATES, 'QUICKSTART.md'), path.join(CWD, 'QUICKSTART.md'));
+  ok('QUICKSTART.md criado na raiz do projeto');
+
+  copyDir(path.join(TEMPLATES, 'agents'), agentsDir, ['harness']);
   ok('Workflow instalado em agents/');
 
   log();
-  info('O harness instala hooks de segurança no nível do agente ' + dim('(opcional)'));
+  info('O harness instala hooks de segurança e slash commands ' + dim('(opcional)'));
   log('  1) Pular esta etapa');
   log('  2) Claude Code');
   log('  3) OpenCode');
   const choice = await ask('  Escolha [1]: ');
 
-  const harnessMap = { '2': 'claude-code', '3': 'opencode' };
-  const harness = harnessMap[choice];
+  const harnessCfg = HARNESS_CONFIG[choice];
+  let harnessInstalled = false;
 
-  if (harness) {
-    const src  = path.join(TEMPLATES, 'agents', 'harness', harness);
-    const dest = path.join(agentsDir, 'harness', harness);
-    if (fs.existsSync(src)) {
-      copyDir(src, dest);
-      ok(`Harness instalado: ${harness}`);
+  if (harnessCfg) {
+    const { name, commandsDest } = harnessCfg;
+    const harnessSrc = path.join(TEMPLATES, 'agents', 'harness', name);
+
+    if (fs.existsSync(harnessSrc)) {
+      copyDir(harnessSrc, path.join(agentsDir, 'harness', name), ['commands']);
+      ok(`Harness instalado: ${name}`);
+
+      const cmdSrc = path.join(harnessSrc, 'commands');
+      if (fs.existsSync(cmdSrc)) {
+        copyDir(cmdSrc, commandsDest);
+        ok(`Slash commands instalados em ${path.relative(CWD, commandsDest)}/`);
+      }
+
+      harnessInstalled = true;
     } else {
-      warn(`Harness "${harness}" não encontrado. Pule e instale manualmente se necessário.`);
+      warn(`Harness "${name}" não encontrado. Use sdd harness para instalar depois.`);
     }
   } else {
-    info('Harness ignorado.');
+    info('Harness ignorado. Use ' + bold('sdd harness') + ' para instalar depois.');
   }
 
   log();
@@ -106,13 +137,22 @@ async function init() {
   log(`  ${c.cyan}3.${c.reset} Forneça seu PRD ou descreva o projeto`);
   log(`  ${c.cyan}4.${c.reset} Revise os arquivos gerados e delete agents/SETUP.md`);
   log();
+
+  if (harnessInstalled) {
+    showSlashCommands();
+  } else {
+    log(dim('  Sem slash commands — consulte QUICKSTART.md para instruções manuais.'));
+    log(dim('  Para instalar depois: sdd harness'));
+  }
+
+  log();
   log(dim('  Documentação: https://github.com/moisesuailab/spec-driven-workflow'));
   log();
 }
 
-async function update() {
+async function harness() {
   log();
-  log(bold('sdd-cli update'));
+  log(bold('sdd harness'));
   log();
 
   const agentsDir = path.join(CWD, 'agents');
@@ -122,7 +162,76 @@ async function update() {
     process.exit(1);
   }
 
-  warn('Isso atualizará AGENTS.md, RULES.md e todos os prompts.');
+  info('O que deseja fazer?');
+  log('  1) Remover harness atual');
+  log('  2) Instalar / trocar para Claude Code');
+  log('  3) Instalar / trocar para OpenCode');
+  const choice = await ask('  Escolha: ');
+
+  if (choice === '1') {
+    const harnessDir = path.join(agentsDir, 'harness');
+    if (fs.existsSync(harnessDir)) {
+      fs.rmSync(harnessDir, { recursive: true });
+      ok('Hooks removidos de agents/harness/');
+    }
+    for (const cfg of Object.values(HARNESS_CONFIG)) {
+      removeSddCommands(cfg.commandsDest);
+      if (fs.existsSync(cfg.commandsDest)) {
+        ok(`Slash commands removidos de ${path.relative(CWD, cfg.commandsDest)}/`);
+      }
+    }
+    log();
+    ok('Harness desinstalado.');
+    log();
+    return;
+  }
+
+  const harnessCfg = HARNESS_CONFIG[choice];
+  if (!harnessCfg) {
+    info('Operação cancelada.');
+    log();
+    process.exit(0);
+  }
+
+  const { name, commandsDest } = harnessCfg;
+  const harnessSrc = path.join(TEMPLATES, 'agents', 'harness', name);
+
+  if (!fs.existsSync(harnessSrc)) {
+    error(`Harness "${name}" não encontrado nos templates.`);
+    process.exit(1);
+  }
+
+  for (const cfg of Object.values(HARNESS_CONFIG)) {
+    removeSddCommands(cfg.commandsDest);
+  }
+
+  copyDir(harnessSrc, path.join(agentsDir, 'harness', name), ['commands']);
+  ok(`Harness instalado: ${name}`);
+
+  const cmdSrc = path.join(harnessSrc, 'commands');
+  if (fs.existsSync(cmdSrc)) {
+    copyDir(cmdSrc, commandsDest);
+    ok(`Slash commands instalados em ${path.relative(CWD, commandsDest)}/`);
+  }
+
+  log();
+  showSlashCommands();
+  log();
+}
+
+async function update() {
+  log();
+  log(bold('sdd update'));
+  log();
+
+  const agentsDir = path.join(CWD, 'agents');
+  if (!fs.existsSync(agentsDir)) {
+    error('Pasta agents/ não encontrada. Rode ' + bold('sdd init') + ' primeiro.');
+    log();
+    process.exit(1);
+  }
+
+  warn('Isso atualizará AGENTS.md, RULES.md, QUICKSTART.md e todos os prompts.');
   const answer = await ask('  Deseja continuar? (s/N) ');
   if (answer.toLowerCase() !== 's') {
     info('Operação cancelada.');
@@ -132,9 +241,10 @@ async function update() {
   log();
 
   const coreFiles = [
-    { rel: ['AGENTS.md'],               dest: path.join(CWD, 'AGENTS.md') },
-    { rel: ['agents', 'AGENTS.md'],     dest: path.join(agentsDir, 'AGENTS.md') },
-    { rel: ['agents', 'RULES.md'],      dest: path.join(agentsDir, 'RULES.md') },
+    { rel: ['AGENTS.md'],           dest: path.join(CWD, 'AGENTS.md') },
+    { rel: ['QUICKSTART.md'],       dest: path.join(CWD, 'QUICKSTART.md') },
+    { rel: ['agents', 'AGENTS.md'], dest: path.join(agentsDir, 'AGENTS.md') },
+    { rel: ['agents', 'RULES.md'],  dest: path.join(agentsDir, 'RULES.md') },
   ];
 
   for (const { rel, dest } of coreFiles) {
@@ -163,11 +273,12 @@ function help() {
   log();
   log('Uso:');
   log(`  sdd-cli ${c.cyan}init${c.reset}       Instala o workflow no projeto atual`);
+  log(`  sdd-cli ${c.cyan}harness${c.reset}    Instala, troca ou remove o harness do agente`);
   log(`  sdd-cli ${c.cyan}update${c.reset}     Atualiza prompts e regras, preserva dados do projeto`);
   log(`  sdd-cli ${c.cyan}help${c.reset}       Exibe esta mensagem`);
   log(`  sdd-cli ${c.cyan}--version${c.reset}  Exibe a versão instalada`);
   log();
-  log(dim('  Alias: sdd init / sdd update / sdd help / sdd --version'));
+  log(dim('  Alias: sdd init / sdd harness / sdd update / sdd help / sdd --version'));
   log();
   log(dim('  Documentação: https://github.com/moisesuailab/spec-driven-workflow'));
   log();
@@ -178,6 +289,9 @@ const cmd = process.argv[2];
 switch (cmd) {
   case 'init':
     init().catch(e => { error(e.message); process.exit(1); });
+    break;
+  case 'harness':
+    harness().catch(e => { error(e.message); process.exit(1); });
     break;
   case 'update':
     update().catch(e => { error(e.message); process.exit(1); });
