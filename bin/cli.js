@@ -134,8 +134,9 @@ async function init() {
   log(bold('Próximos passos:'));
   log(`  ${c.cyan}1.${c.reset} Abra uma sessão do seu agente no projeto`);
   log(`  ${c.cyan}2.${c.reset} Instrua: ${dim('"Leia e siga agents/SETUP.md"')}`);
-  log(`  ${c.cyan}3.${c.reset} Forneça seu PRD ou descreva o projeto`);
-  log(`  ${c.cyan}4.${c.reset} Revise os arquivos gerados e delete agents/SETUP.md`);
+  log(`     ${dim('→ Projeto novo:      descreva o projeto ou forneça o PRD')}`);
+  log(`     ${dim('→ Projeto existente: o agente escaneia o código automaticamente')}`);
+  log(`  ${c.cyan}3.${c.reset} Revise os arquivos gerados e delete agents/SETUP.md`);
   log();
 
   if (harnessInstalled) {

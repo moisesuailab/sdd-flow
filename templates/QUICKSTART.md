@@ -1,50 +1,70 @@
-# SDD Workflow — Quick Start
+# SDD Workflow - Quick Start
 
-## Ciclo
+## Cycle
 
-Cada feature passa por 4 fases em sessões isoladas:
+Each feature goes through 4 phases in isolated sessions:
 
 ```
 RESEARCH → PLAN → IMPLEMENT → VALIDATE
 ```
 
-## Iniciando uma feature
+## Initial setup
 
-### Com slash commands
-
-```
-/sdd-research 001-nome-da-feature    → produz RESEARCH.md
-/sdd-plan 001-nome-da-feature        → produz SPEC.md + TASK.md + TEST.md
-/sdd-implement 001-nome-da-feature   → implementa uma task por vez
-/sdd-validate 001-nome-da-feature    → produz VALIDATION.md
-```
-
-### Sem slash commands
-
-Instrua seu agente em cada sessão:
+After running `sdd init`, open your agent in the project and instruct:
 
 ```
-"Leia e siga agents/prompts/rpi-research.md. Spec: 001-nome-da-feature"
-"Leia e siga agents/prompts/rpi-plan.md. Spec: 001-nome-da-feature"
-"Leia e siga agents/prompts/rpi-implement.md. Spec: 001-nome-da-feature"
-"Leia e siga agents/prompts/rpi-validate.md. Spec: 001-nome-da-feature"
+"Read and follow agents/SETUP.md"
 ```
 
-## Estrutura da spec após o ciclo completo
+- **New project:** describe the project or provide the PRD — the agent generates PROJECT.md and the skills
+- **Existing project:** the agent scans the code automatically
+
+Review the generated files and delete `agents/SETUP.md`.
+
+## Starting a feature
+
+### With slash commands
 
 ```
-agents/specs/001-nome-da-feature/
-  RESEARCH.md     ← fase 1
-  SPEC.md         ← fase 2
-  TASK.md         ← fase 2
-  TEST.md         ← fase 2
-  PROGRESS.md     ← atualizado na fase 3
-  DECISIONS.md    ← decisões arquiteturais
-  VALIDATION.md   ← fase 4
+/sdd-research 001-feature-name    → produces RESEARCH.md
+/sdd-plan 001-feature-name        → produces SPEC.md + TASK.md + TEST.md
+/sdd-implement 001-feature-name   → implements one task at a time
+/sdd-validate 001-feature-name    → produces VALIDATION.md
 ```
 
-## Referências
+### Without slash commands
 
-- Regras do processo → `agents/RULES.md`
-- Definição completa do workflow → `agents/AGENTS.md`
-- Documentação → https://github.com/moisesuailab/spec-driven-workflow
+Instruct your agent in each session:
+
+```
+"Read and follow agents/prompts/rpi-research.md. Spec: 001-feature-name"
+"Read and follow agents/prompts/rpi-plan.md. Spec: 001-feature-name"
+"Read and follow agents/prompts/rpi-implement.md. Spec: 001-feature-name"
+"Read and follow agents/prompts/rpi-validate.md. Spec: 001-feature-name"
+```
+
+## Creating a new spec
+
+```bash
+sdd new feature-name
+# ✔ Spec created: agents/specs/001-feature-name/
+```
+
+## Spec structure after the full cycle
+
+```
+agents/specs/001-feature-name/
+  RESEARCH.md     ← phase 1
+  SPEC.md         ← phase 2
+  TASK.md         ← phase 2
+  TEST.md         ← phase 2
+  PROGRESS.md     ← updated in phase 3
+  DECISIONS.md    ← architectural decisions
+  VALIDATION.md   ← phase 4
+```
+
+## References
+
+- Process rules → `agents/RULES.md`
+- Full workflow definition → `agents/AGENTS.md`
+- Documentation → https://github.com/moisesuailab/sdd-flow

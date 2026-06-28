@@ -19,47 +19,49 @@ npm install -g sdd-flow
 ## Usage
 
 ```bash
-sdd init       # Instala o workflow no projeto atual
-sdd harness    # Instala, troca ou remove o harness do agente
-sdd update     # Atualiza prompts e regras, preserva dados do projeto
+sdd init              # Installs the workflow into the current project
+sdd new <name>        # Creates a spec folder with auto-numbering
+sdd harness           # Installs, switches, or removes the agent harness
+sdd update            # Updates prompts and rules, preserves project data
 sdd --version
 ```
 
-> Alias disponível: use `sdd` ou `sdd-cli` — ambos funcionam.
+> Alias available: use `sdd` or `sdd-cli` — both work.
 
-### New or existing project
+---
 
-```bash
-cd my-project
-sdd init
+## After `init`
+
+Open a new session with your agent and instruct:
+
+```
+"Read and follow agents/SETUP.md"
 ```
 
-Installs the `agents/` folder with all workflow files. Optionally installs safety hooks and slash commands for your agent (Claude Code or OpenCode).
+- **New project:** describe the project or provide a PRD — the agent generates PROJECT.md and skills
+- **Existing project:** the agent scans the codebase automatically
 
-### Add or switch harness after init
+Review the generated files and delete `agents/SETUP.md`.
+
+---
+
+## Add or switch harness after init
 
 ```bash
 sdd harness
 ```
 
-Installs, replaces, or removes the harness and slash commands at any time — no need to reinstall the package.
+Installs, replaces, or removes the harness and slash commands at any time.
 
-### Update workflow (preserves your project data)
+---
+
+## Update workflow (preserves your project data)
 
 ```bash
 sdd update
 ```
 
 Updates `AGENTS.md`, `RULES.md`, `QUICKSTART.md`, and all prompts. Your `PROJECT.md`, `DECISIONS.md`, `skills/`, `specs/`, and `harness/` are never touched.
-
----
-
-## After `init`
-
-1. Open a new session with your agent
-2. Instruct: *"Read and follow `agents/SETUP.md`"*
-3. Provide your PRD or describe the project
-4. Review the generated files and delete `agents/SETUP.md`
 
 ---
 
