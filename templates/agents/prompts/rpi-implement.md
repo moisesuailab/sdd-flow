@@ -37,6 +37,24 @@ You will implement **one single task** from an already planned feature.
 
 ---
 
+## Emerging scope
+
+If unexpected work is discovered during implementation, apply **R15** before continuing:
+
+1. Describe the emerging work in one sentence
+2. Apply the decision table:
+   - Modifies files already in this spec's scope → add task to current `TASK.md`
+   - Small gap or planning oversight → add task to current `TASK.md`
+   - New module, entity, or feature goal not in `SPEC.md` → new spec
+   - Explicitly in `SPEC.md` "Out of scope" → new spec
+   - Crosses a domain boundary → new spec
+3. State the chosen action with justification
+4. **Stop and wait for developer confirmation** before proceeding
+
+Never decide silently. Never create a new spec or add a task without surfacing the decision first.
+
+---
+
 ## Constraints
 
 - Do not anticipate future tasks

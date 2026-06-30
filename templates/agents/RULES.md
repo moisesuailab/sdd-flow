@@ -114,3 +114,19 @@ Every generated code must follow:
 If a requirement has multiple valid interpretations, list them explicitly
 before choosing one. Never pick silently. If the ambiguity blocks progress,
 stop and ask before generating any code.
+
+---
+
+### R15 — New work during Implement: add task or new spec?
+
+When unexpected work emerges during the Implement phase, apply this decision table:
+
+| Condition | Action |
+|---|---|
+| Modifies files already in this spec's scope | Add task to current `TASK.md` |
+| Small gap or planning oversight | Add task to current `TASK.md` |
+| New module, entity, or feature goal not in `SPEC.md` | Create new spec |
+| Explicitly listed in `SPEC.md` "Out of scope" section | Create new spec |
+| Crosses a domain boundary | Create new spec |
+
+**Never decide silently.** Always stop, describe the emerging work, apply the table, state the chosen action with justification, and wait for developer confirmation before proceeding.
