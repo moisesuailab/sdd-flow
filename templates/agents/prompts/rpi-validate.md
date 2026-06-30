@@ -13,7 +13,7 @@ You will validate the implementation of a completed feature against its spec and
 - `agents/PROJECT.md`
 - `agents/RULES.md`
 - `agents/specs/NNN-name/SPEC.md`
-- `agents/specs/NNN-name/TASK.md` — confirm all tasks are marked `[x]`
+- `agents/specs/NNN-name/TASK.md` — identify which tasks are complete `[x]` and which are pending `[ ]`
 - `agents/specs/NNN-name/TEST.md`
 - `agents/specs/NNN-name/PROGRESS.md`
 - The code files produced during Implement (listed in PROGRESS.md History)
@@ -25,9 +25,13 @@ You will validate the implementation of a completed feature against its spec and
 
 ## Validation procedure
 
-### Step 1 — Confirm implementation is complete
-Check that every task in `TASK.md` is marked `[x]`.
-If any `[ ]` remains, **stop and report** — do not proceed with validation.
+### Step 1 — Determine validation scope
+Validation may be requested at any time — it does not require all tasks to be complete.
+
+- If all tasks are `[x]`: full validation — cover every task and every test case in TEST.md
+- If some tasks are still `[ ]`: partial validation — scope to completed tasks only; explicitly list which tasks and test cases are **out of scope** in VALIDATION.md
+
+Never block validation because tasks are pending. Report the scope clearly instead.
 
 ### Step 2 — Verify task-level conditions
 For each task in `TASK.md`, read its `verify:` condition and check whether
@@ -48,6 +52,9 @@ Write `agents/specs/NNN-name/VALIDATION.md` with the structure below.
 # VALIDATION — [Feature Name]
 
 ## Status: [✅ Approved | ⚠️ Partial | ❌ Failed]
+
+## Scope
+[Full — all tasks complete] or [Partial — tasks T01..TNN validated; TXX..TYY pending implementation]
 
 ---
 

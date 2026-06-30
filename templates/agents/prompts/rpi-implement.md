@@ -33,6 +33,10 @@ You will implement **one single task** from an already planned feature.
    - Mark `[x]` on the task in TASK.md
    - Update PROGRESS.md with what was done and any observations
    - Record relevant architectural decisions in DECISIONS.md
+   - **Check TEST.md for impact** — if any test case covers behavior changed by this task:
+     - Update the affected test case(s) in TEST.md if the expected behavior changed
+     - Record in PROGRESS.md which test cases were affected and why
+     - If VALIDATION.md exists and covers those cases, mark the affected rows as `⚠️ Needs re-validation`
 5. **Stop and wait for confirmation** before moving to the next task
 
 ---
