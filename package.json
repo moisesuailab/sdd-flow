@@ -1,7 +1,7 @@
 {
   "name": "sdd-flow",
   "version": "1.3.2",
-  "description": "Spec Driven Development workflow for AI-assisted development (SDD + RPI)",
+  "description": "Spec Driven Development workflow for AI-assisted development (SDD + RPIV)",
   "bin": {
     "sdd-cli": "bin/cli.js",
     "sdd": "bin/cli.js"
@@ -16,7 +16,7 @@
   "keywords": [
     "sdd",
     "spec-driven-development",
-    "rpi",
+    "rpiv",
     "ai-workflow",
     "claude-code",
     "opencode",

@@ -1,6 +1,6 @@
 # Agents Template — Setup Guide
 
-This template implements the **SDD (Spec Driven Development)** workflow using the **RPI (Research → Plan → Implement)** methodology. It is LLM-agnostic and stack-agnostic.
+This template implements the **SDD (Spec Driven Development)** workflow using the **RPIV (Research → Plan → Implement → Validate)** methodology. It is LLM-agnostic and stack-agnostic.
 
 > After completing setup, delete this file from the project.
 
@@ -192,7 +192,7 @@ chmod +x agents/harness/claude-code/.hooks/*.sh
 
 ### Step 5 — Validate Before First Spec
 
-Before starting the first RPI cycle, confirm:
+Before starting the first RPIV cycle, confirm:
 
 - [ ] Root `AGENTS.md` is present and unmodified
 - [ ] `agents/PROJECT.md` has no `[FILL: ...]` placeholders remaining
@@ -209,7 +209,7 @@ When setup is complete:
 
 1. Create the folder: `agents/specs/001-feature-name/`
 2. Run the Research phase using `agents/prompts/rpi-research.md`
-3. Follow the RPI cycle through to implementation
+3. Follow the RPIV cycle through to validation
 
 ---
 

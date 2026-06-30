@@ -44,7 +44,7 @@ Each arrow is a phase boundary. The agent starts fresh. Only the artifact passes
 | 🔍 **Research** | Your requirements | `RESEARCH.md` |
 | 📐 **Plan** | `RESEARCH.md` | `SPEC.md` + `TASK.md` + `TEST.md` |
 | 🔨 **Implement** | `SPEC.md` + `TASK.md` | Code + updated `TASK.md` |
-| ✅ **Validate** | `TEST.md` + codebase | Verified `PROGRESS.md` |
+| ✅ **Validate** | `TEST.md` + codebase | `VALIDATION.md` |
 
 > The agent stops after each task in the Implement phase and waits for your review. One task, one diff, one decision at a time.
 

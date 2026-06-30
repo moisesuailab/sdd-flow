@@ -1,7 +1,7 @@
 # Agent Instructions
 
-This project uses **Spec Driven Development (SDD)** with the **Research → Plan → Implement (RPI)**
-methodology. Every feature goes through three isolated phases, each in its own agent session.
+This project uses **Spec Driven Development (SDD)** with the **Research → Plan → Implement → Validate (RPIV)**
+methodology. Every feature goes through four isolated phases, each in its own agent session.
 
 ---
 
@@ -35,12 +35,13 @@ When a spec folder is provided, read `SPEC.md` and `TASK.md` before implementing
 
 ---
 
-## RPI prompts
+## RPIV prompts
 
 Full prompts for each phase are in `agents/prompts/`. Use them by reading the relevant file:
 - Phase 1 — Research: `agents/prompts/rpi-research.md`
 - Phase 2 — Plan: `agents/prompts/rpi-plan.md`
 - Phase 3 — Implement: `agents/prompts/rpi-implement.md`
+- Phase 4 — Validate: `agents/prompts/rpi-validate.md`
 
 ---
 
