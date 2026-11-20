@@ -1,0 +1,70 @@
+name: Publish npm package
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Exact version already committed in package.json
+        required: true
+        type: string
+      dist_tag:
+        description: Publish to next first; latest is the stable default installation
+        required: true
+        default: next
+        type: choice
+        options: [next, latest]
+permissions:
+  contents: read
+concurrency:
+  group: npm-publication
+  cancel-in-progress: false
+jobs:
+  validate:
+    if: github.ref == 'refs/heads/main' && github.repository == 'moisesuailab/sdd-flow'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [22, 24]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: ${{ matrix.node }}
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts
+      - run: npm test
+      - run: npm run check
+  publish:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      RELEASE_VERSION: ${{ inputs.version }}
+      DIST_TAG: ${{ inputs.dist_tag }}
+      RELEASE_SHA: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts
+      - name: Validate release identity and unused version
+        run: node scripts/release-check.js --version "$RELEASE_VERSION" --tag "$DIST_TAG" --expected-sha "$RELEASE_SHA" --require-main --check-registry
+      - name: Pack and inspect the exact artifact
+        run: |
+          npm pack --ignore-scripts --pack-destination "$RUNNER_TEMP"
+          npm publish "$RUNNER_TEMP/sdd-flow-$RELEASE_VERSION.tgz" --dry-run --ignore-scripts --tag "$DIST_TAG"
+      - name: Publish using the configured npm trusted publisher
+        run: npm publish "$RUNNER_TEMP/sdd-flow-$RELEASE_VERSION.tgz" --ignore-scripts --provenance --tag "$DIST_TAG"
+      - name: Verify the published version
+        run: npm view "sdd-flow@$RELEASE_VERSION" version dist-tags --json --registry=https://registry.npmjs.org

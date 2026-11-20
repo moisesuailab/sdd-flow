@@ -1,168 +1,113 @@
 # sdd-flow
 
-> A spec-driven workflow for AI-assisted development — installed in seconds, works with any agent.
+A portable development methodology for AI-assisted software work. Organize intent, load relevant
+task context and retain traceable execution. Harness orchestration is outside the core's scope.
 
-```bash
-npm install -g sdd-flow
-sdd init
-```
+This checkout targets **2.0.0**. It is a breaking evolution from 1.x; publishing this source is a separate release action.
+Requires Node.js 22 or newer.
 
----
+Portuguese guides: [methodology](docs/methodology.pt-BR.md), [local testing](docs/local-testing.pt-BR.md),
+[usage](docs/usage.pt-BR.md) and [GitHub/npm release](docs/releases.pt-BR.md).
 
-## Why sdd-flow exists
+## Try this checkout
 
-AI agents drift. A session that starts well ends with the agent ignoring the spec, inventing APIs, and refactoring things you didn't ask it to touch. The usual fix — better prompts, more context — doesn't scale.
+~~~sh
+npm ci
+npm link
+cd /path/to/your-project
+sdd init --harness claude-code
+# Alternatively: sdd init --harness opencode
+~~~
 
-**sdd-flow takes a different approach: phase isolation.**
+Complete agents/SETUP.md and the short project map. Configure actual checks, then run sdd doctor.
+For projects already using 1.x, read [migration](docs/migration.md) first.
 
-Every feature goes through four phases. Each phase runs in its own agent session and receives only the artifact from the previous phase — not the full conversation history. Context stays lean. The agent reads the spec fresh every session and can't drift from what it hasn't accumulated.
+## A change from plan to evidence
 
-This is a workflow for developers who want to stay in control of what gets built and why.
+~~~sh
+sdd new export-csv --mode standard
+sdd context 001-export-csv --phase plan
+# Author SPEC.md and TASK.md using the canonical formats.
+sdd check 001-export-csv
+# After the user authorizes this exact scope:
+sdd approve 001-export-csv --by "Moisés"
+sdd context 001-export-csv --phase implement --task T01
+# Implement and verify the task, then set its canonical status to done.
+sdd verify 001-export-csv --scope partial
+# Consolidate lasting capability contracts before final verification.
+sdd verify 001-export-csv
+sdd close 001-export-csv --by "Moisés" --note "Local correction; no lasting contract changed" --archive
+~~~
 
----
+The approval command records authorization; it does not prove who typed it or grant runtime permissions.
+Agents must use actual authorization already given by the user and must not fabricate it.
 
-## The RPIV Cycle
+## What changes in 2.x
 
-```
-Requirements
-     │
-     ▼
-┌────────────┐  new session  ┌────────────┐  new session  ┌─────────────┐  new session  ┌────────────┐
-│  RESEARCH  │ ────────────▶ │    PLAN    │ ────────────▶ │  IMPLEMENT  │ ────────────▶ │  VALIDATE  │
-│            │               │            │               │             │               │            │
-│ RESEARCH   │               │ SPEC.md    │               │ Code        │               │ Verified   │
-│ .md        │               │ TASK.md    │               │ TASK.md ✓   │               │ PROGRESS   │
-│            │               │ TEST.md    │               │ (one task,  │               │ .md        │
-│            │               │ PROGRESS   │               │ then stop)  │               │            │
-└────────────┘               └────────────┘               └─────────────┘               └────────────┘
-```
-
-Each arrow is a phase boundary. The agent starts fresh. Only the artifact passes through.
-
-| Phase | Input | Output |
-|-------|-------|--------|
-| 🔍 **Research** | Your requirements | `RESEARCH.md` |
-| 📐 **Plan** | `RESEARCH.md` | `SPEC.md` + `TASK.md` + `TEST.md` |
-| 🔨 **Implement** | `SPEC.md` + `TASK.md` | Code + updated `TASK.md` |
-| ✅ **Validate** | `TEST.md` + codebase | `VALIDATION.md` |
-
-> The agent stops after each task in the Implement phase and waits for your review. One task, one diff, one decision at a time.
-
----
-
-## Quick Start
-
-```bash
-# Install
-npm install -g sdd-flow
-
-# Set up in your project
-cd your-project
-sdd init
-
-# Create your first feature spec
-sdd new user-auth   # creates agents/specs/001-user-auth/
-```
-
-Open a new agent session and say:
-
-```
-Read and follow agents/SETUP.md
-```
-
-The agent scans your project (or reads your PRD) and generates `PROJECT.md`, `DECISIONS.md`, and a `skills/` directory tailored to your stack. Review the files, then delete `agents/SETUP.md`. You're ready.
-
----
-
-## Running a Feature
-
-### Without harness — any editor
-
-```
-# Session 1 — Research
-"Read and follow agents/prompts/rpi-research.md"
-
-# Session 2 — Plan
-"Read and follow agents/prompts/rpi-plan.md. Spec at agents/specs/001-user-auth/"
-
-# Session 3 — Implement
-"Read and follow agents/prompts/rpi-implement.md. Spec at agents/specs/001-user-auth/"
-
-# Session 4 — Validate
-"Read and follow agents/prompts/rpi-validate.md. Spec at agents/specs/001-user-auth/"
-```
-
-### With harness — Claude Code / OpenCode
-
-```bash
-sdd harness   # installs slash commands
-```
-
-```
-/sdd-research  001-user-auth
-/sdd-plan      001-user-auth
-/sdd-implement 001-user-auth
-/sdd-validate  001-user-auth
-```
-
----
+- **Short entry point:** a managed block preserves existing root instructions.
+- **Structured metadata:** real YAML parsing, schema versions, stable IDs and explicit references.
+- **Bounded context:** select the phase/task, current capabilities, active decisions and relevant skills.
+  Overflow fails with file sizes; documents are never silently truncated.
+- **One task state:** TASK.md front matter is canonical. STATE.md is an optional short resumption note.
+- **Adaptive rigor:** light, standard and rigorous modes; step or batch autonomy.
+- **Executable checks:** approvals bind to scope; receipts bind to source files, selected contracts and configuration.
+- **Manual evidence:** manual and inspection cases can pass when observed and recorded for current inputs.
+- **Consolidation:** close only with current full verification and an explicit current-knowledge update or explanation.
+- **Safe maintenance:** dry-run, ownership checks, backups, legacy preservation and active adapter entry points.
+- **Portable distribution:** export Agent Skills bundles, a Claude Code plugin directory, or an OpenCode skill layout.
 
 ## Commands
 
-```bash
-sdd init              # install the workflow into the current project
-sdd new <name>        # create a numbered spec folder (001-, 002-, ...)
-sdd harness           # install, switch, or remove slash commands
-sdd update            # update prompts and rules — never touches your specs or decisions
-sdd --version
-```
+| Command | Purpose |
+|---|---|
+| init | Install missing project files and preserve project-owned configuration |
+| docs --types prd,sd,ds,adr,roadmap | Create only selected missing reference drafts; --dry-run previews and existing documents are preserved |
+| new NAME | Reserve an ID and create a change in the chosen mode |
+| context ID | Compose the bounded packet; --inspect diagnoses size without emitting bodies; headings are selected in the manifest |
+| skills list / show NAME | Discover metadata or read a selected body |
+| check ID | Validate structure, references, task dependencies and phase gates |
+| approve ID --by NAME | Record actual authorization for the current normative scope |
+| revise ID --by NAME --reason TEXT | Preserve revision history, reopen impacted work and invalidate the prior scope approval |
+| evidence ID | Create a template bound to current inputs for manual/inspection cases |
+| handoff ID | Prepare version-bound external limitations and safe user verification instructions |
+| verify ID | Run local checks; --handoff records limitations; --run-external opts into authorized external commands |
+| close ID --by NAME | Require current full verification and consolidation; optionally --archive |
+| reopen / cancel ID | Record explicit lifecycle decisions without deleting historical IDs |
+| status / doctor | Inspect active/archive changes or diagnose project setup |
+| update --dry-run | Preview installation changes; customized files are preserved unless explicitly replaced |
+| migrate ID --dry-run | Preview conservative conversion of legacy artifacts |
+| harness NAME | Install active native command/skill wrappers; --remove removes only unmodified owned files |
+| export FORMAT --out DIR | Build a new directory for claude-code, opencode or agent-skills distribution |
 
----
+All commands support --json. Exit codes: 0 completed (passed or limited), 1 invalid/failing, 2 partial verification.
+Limited closes implementation with pending external verification; it never claims those tests passed or authorizes deployment.
+Required checks block on failure; advisory checks remain visible warnings. QUALITY.md is loaded only for planning/review.
+With --json, success and error objects use stdout; runtime/environment diagnostics remain on stderr.
+CLI and documentation use English; project code, UI and conversation languages are configured by the project/user.
 
-## What gets installed
+## Documentation
 
-```
-agents/
-├── AGENTS.md              ← agent role and SDD rules (read every session)
-├── RULES.md               ← behavioral constraints (no rogue git, no scope creep)
-├── PROJECT.md             ← your stack and conventions (auto-generated on setup)
-├── DECISIONS.md           ← append-only architectural decisions log
-├── SETUP.md               ← first-run only (delete after setup)
-├── prompts/               ← one file per phase + utility prompts
-├── skills/                ← capability files auto-generated for your stack
-└── specs/
-    └── 001-user-auth/
-        ├── RESEARCH.md
-        ├── SPEC.md
-        ├── TASK.md
-        ├── PROGRESS.md
-        └── TEST.md
-```
+- [Português](README.pt-BR.md)
+- [Quality gates and missing environments (Português)](docs/quality-gates.pt-BR.md)
+- [Usage scenarios and project-specific policies (Português)](docs/usage.pt-BR.md)
+- [Updating the existing npm package (Português)](docs/releases.pt-BR.md)
+- [Formats and a complete example](docs/formats.md)
+- [Context and lifecycle design](docs/architecture.md)
+- [Upgrading existing projects](docs/migration.md)
+- [Adapters and distribution](docs/distribution.md)
+- [Quality checks and evaluation](docs/quality.md)
+- [Observed implementation validation](docs/validation.md)
+- [Contributing](CONTRIBUTING.md)
+- [Changelog](CHANGELOG.md)
 
-> `sdd update` only touches `AGENTS.md`, `RULES.md`, and `prompts/`.  
-> Your specs, decisions, and skills are never modified.
+## Limits
 
----
-
-## Works with any stack
-
-sdd-flow operates at the spec level, not the code level. JavaScript, TypeScript, Python, Java, Go, PHP — the agent adapts to your stack during setup. No framework assumptions, no extra API keys, no additional costs beyond what you already use.
-
----
-
-## Compatible editors
-
-Claude Code · OpenCode · Cursor · Windsurf · Codex CLI · any IDE with filesystem access
-
----
-
-## Workflow template
-
-The prompts and rules installed by `sdd-flow` are maintained at:  
-[github.com/moisesuailab/spec-driven-workflow](https://github.com/moisesuailab/spec-driven-workflow)
-
----
+The CLI validates declared relationships and records actual executions. It cannot prove that a passing test
+semantically covers every requirement, authenticate an approval author, or sandbox a configured command.
+Review assertions and use your tool's native permissions plus isolated test environments.
+Source fingerprints use project files outside agents/ and dependency internals plus explicitly selected
+workflow contracts. Configure verification.exclude for generated artifacts; exclusions affect evidence validity.
 
 ## License
 
-MIT
+MIT. Workflow knowledge and runtime integrations are maintained together in this repository.

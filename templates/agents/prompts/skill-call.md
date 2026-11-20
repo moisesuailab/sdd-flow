@@ -1,29 +1,11 @@
-# Prompt: Execute task using a Skill
-
-Use this prompt when a task requires following a specific skill pattern.
-
+---
+schema_version: 2
+kind: utility
+description: Apply a selected project skill during the canonical implementation procedure.
 ---
 
-## Agent instruction
+# Apply a skill
 
-Read:
-- `agents/AGENTS.md`
-- `agents/PROJECT.md`
-- `agents/RULES.md`
-- `agents/specs/<SPEC_NUMBER>/SPEC.md`
-- `agents/specs/<SPEC_NUMBER>/TASK.md`
-- `agents/specs/<SPEC_NUMBER>/PROGRESS.md`
-- `agents/skills/<SKILL_NAME>/SKILL.md`
-
-Now implement ONLY the task: `<TASK_ID>`
-
-Use the skill as the mandatory pattern source for this task.
-
----
-
-## Rules
-
-- Do not run git commands
-- Do not add comments or documentation unless explicitly required by the skill
-- Update PROGRESS.md upon completion
-- Stop and wait for confirmation before the next task
+Use sdd skills list to discover metadata, then sdd skills show NAME for the selected body.
+Follow rpi-implement.md for the requested spec/task. A skill does not bypass scope approval,
+execution permissions or verification. Read referenced resources only when they are relevant.

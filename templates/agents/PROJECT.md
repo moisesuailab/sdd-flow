@@ -1,145 +1,35 @@
-# PROJECT.md
-
-<!--
-  ⚠️  SETUP REQUIRED
-  Replace every [FILL: ...] with your project's actual content.
-  Delete all comments (<!-- ... -->) when done.
-  This file is read by the agent in EVERY session — keep it dense and scannable.
--->
-
-## Overview
-
-[FILL: 1–2 sentences describing what the project does and the problem it solves]
-
+---
+schema_version: 2
+kind: project
+description: Short project map, technology choices and source locations.
 ---
 
-## Stack
+# Project map
 
-<!--
-  List every layer of the stack. Add or remove rows as needed.
-  Examples per layer:
-    Runtime:     Node.js 20, Python 3.12, Google Apps Script V8, Deno
-    Framework:   Express, FastAPI, NestJS, Django, none
-    Persistence: PostgreSQL, MongoDB, Redis, Google Sheets, SQLite
-    Frontend:    React + Tailwind, Vue 3, Alpine.js + Tailwind, plain HTML
-    Auth:        JWT, OAuth2, session-based, built-in roles
-    Testing:     Jest, Pytest, Vitest, manual
-    Deployment:  Docker + Railway, Vercel, GCP, manual
--->
+## Purpose
 
-| Layer | Technology |
-|---|---|
-| Runtime | [FILL: e.g. Node.js 20] |
-| Framework | [FILL: e.g. Express 4] |
-| Persistence | [FILL: e.g. PostgreSQL 16] |
-| Frontend | [FILL: e.g. React 18 + Tailwind CSS 3] |
-| Auth | [FILL: e.g. JWT via jsonwebtoken] |
-| Testing | [FILL: e.g. Vitest] |
-| Deployment | [FILL: e.g. Docker + Railway] |
+[FILL: One or two sentences describing the project and intended users.]
 
----
+## Technology and commands
 
-## File / Module Structure
+[FILL: Actual runtime, framework, persistence, package manager and deployment environment.]
+Put executable verification commands in agents/config.yaml; derive them from existing project configuration.
 
-<!--
-  List the key files/directories and their responsibility.
-  Agents use this to know WHERE to look and WHERE to write.
-  Be explicit. Ambiguity here causes agents to create files in wrong places.
+## Navigation
 
-  Example (Node/Express):
-    src/
-      routes/       — Express route handlers (entry point for HTTP requests)
-      services/     — Business logic and orchestration
-      repositories/ — Data access layer (DB queries)
-      middlewares/  — Auth guards, validation, error handling
-      config/       — Environment variables and constants
-    tests/          — Unit and integration tests (mirrors src/ structure)
-    index.ts        — App entry point
--->
+[FILL: A short path-to-responsibility table for the main modules, tests and current capability contracts.]
+Include authoritative product/design sources (PRD, system design, design system and ADRs) when present; preserve their existing paths.
 
-```
-[FILL: paste your actual file/directory tree with a one-line description per entry]
-```
+## Invariants and conventions
 
----
+[FILL: A short map of the project's conventions and their authoritative configuration files.]
+Put mandatory constraints in POLICIES.md; link domain contracts and applicable decisions instead of copying history.
 
-## Architecture Patterns
+## Authorization
 
-<!--
-  Describe the patterns the codebase follows.
-  Agents must know these to avoid violating them when generating code.
+Document project-specific permissions and actions requiring user review.
+Code, explanations and UI language follow this project's requirements; no language or architecture is imposed by the workflow.
 
-  Examples:
-    - Layered architecture: route → service → repository
-    - Repository pattern: all DB access goes through repository classes
-    - Response envelope: all API responses use { status, data, message }
-    - Error handling: all errors thrown as AppError and caught by global middleware
--->
+## Documentation language
 
-[FILL: describe 3–5 architectural patterns enforced in this project]
-
----
-
-## Stack Rules
-
-<!--
-  Rules specific to your stack that agents must follow.
-  These complement the generic rules in RULES.md.
-  Write each rule as: ### SR-NN — Title + explanation + reason.
-
-  Examples to adapt:
-
-  ### SR-01 — All DB access through the repository layer
-  Never call the ORM/DB client directly from services or routes.
-  Always go through the repository class for the entity.
-  Reason: consistent data access, easy to mock in tests.
-
-  ### SR-02 — No raw SQL outside repository files
-  Do not write raw SQL queries in services, routes, or controllers.
-  Reason: keeps query logic centralized and auditable.
-
-  ### SR-03 — All API responses use the standard envelope
-  Every endpoint must return { status, data, message }.
-  Use the shared createResponse() helper — do not build the object manually.
-
-  ### SR-04 — Environment variables only via config/
-  Never read process.env directly outside of config/ files.
-  Reason: centralized configuration, easy to audit and test.
-
-  ### SR-05 — No new dependency without a DECISIONS.md entry
-  Adding a package requires justification documented in DECISIONS.md.
--->
-
-[FILL: write your stack-specific rules here, following the SR-NN format above]
-
----
-
-## Key Conventions
-
-<!--
-  Short, scannable list of conventions the agent must respect.
-  Examples:
-    - Naming: camelCase for variables/functions, PascalCase for classes
-    - File naming: kebab-case for files (e.g. user-service.ts)
-    - Imports: absolute imports via @ alias (e.g. @/services/user)
-    - Date handling: always store UTC, format at display layer
-    - IDs: UUID v4 generated by the DB (do not generate in code)
--->
-
-[FILL: list 4–8 conventions that agents must follow when writing code for this project]
-
----
-
-## Roles / Access Control
-
-<!--
-  Describe who can do what. Delete this section if not applicable.
-  Example:
-    | Role    | Permissions                        |
-    |---|---|
-    | viewer  | read-only access                   |
-    | editor  | read + write                       |
-    | admin   | full access + user management      |
--->
-
-[FILL: describe roles and their permissions, or delete this section]
+The canonical project-document language is documentation.language in config.yaml. Use UTF-8 and correct spelling, including accents. Record any intentional exception here, such as an English API contract. Do not duplicate the setting or translate schema keys and historical evidence.

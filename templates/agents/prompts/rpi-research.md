@@ -1,67 +1,21 @@
-# Prompt: Research (RPI — Phase 1)
-
-Use this prompt to analyze the scope of a feature and produce RESEARCH.md.
-
+---
+schema_version: 2
+kind: procedure
+phase: research
+description: Resolve uncertainty using requirements sources and the actual code.
 ---
 
-## Agent instruction
+# Research
 
-You will analyze the scope of a feature and produce the `RESEARCH.md` for the spec.
-This file is the only artifact of this phase and will be the context for the Plan phase.
+Use the active change manifest and project map. Inspect only the modules, source requirements and integrations relevant to this change.
+Preserve source paths and distinguish facts, assumptions, alternatives and unresolved questions.
+Do not replace the source requirements with an unsupported summary.
+For a change to existing behavior, inspect direct consumers, shared contracts and relevant callers/tests,
+not only the function being edited. Establish available baseline results; separate pre-existing failures,
+introduced regressions and unavailable-environment checks. Keep the impact note short and source-linked.
 
-**Before starting, read:**
-- `agents/AGENTS.md`
-- `agents/PROJECT.md`
-- `agents/RULES.md`
-
-**Expected input:**
-- Requirements source (PRD, textual description, or any document provided)
-- Spec name and number (e.g. `001-user-authentication`)
-
----
-
-## Deliverable: RESEARCH.md
-
-Produce **only** the file `agents/specs/NNN-name/RESEARCH.md` with the structure below.
-Be concise — this file will be read in future sessions as compressed context.
-
-```markdown
-# RESEARCH — [Feature Name]
-
-## Goal
-One clear sentence stating what this feature delivers.
-
-## Entities and data structures
-List the entities involved, data structures to be created or modified,
-and their expected fields/schema.
-
-## Relevant business rules
-Only the rules that directly impact implementation.
-Reference by number if the PRD uses numbered rules.
-
-## Dependencies
-Features or specs that must be complete before this one.
-List `None` if there are none.
-
-## Scope decisions
-What is explicitly inside and outside the scope of this spec.
-Be explicit about edge cases.
-
-## Risks and attention points
-Resolved ambiguities, identified trade-offs, and warnings for the implementation phase.
-
-## Open questions
-List only questions that block the Plan phase.
-If none, write `None`.
-```
-
----
-
-## Constraints
-
-- Produce only RESEARCH.md — no other file must be created
-- Do not create SPEC.md, TASK.md, PROGRESS.md, TEST.md or any code file
-- Do not write code in this phase
-- Do not anticipate implementation decisions
-- If there are open questions, **stop and wait for answers** before delivering RESEARCH.md
-- After delivering RESEARCH.md, **wait for approval** before advancing to Plan
+Create RESEARCH.md only when research adds useful information. It is required in rigorous mode.
+Use front matter with schema_version: 2, artifact: research and id matching the change ID.
+In the body record the goal, relevant evidence, scope, risks and unresolved blocking questions.
+Do not implement code. If a material question blocks planning, ask it while continuing independent investigation.
+No separate approval of research/progress/empty decisions files is required; authorization applies to the normative scope bundle.

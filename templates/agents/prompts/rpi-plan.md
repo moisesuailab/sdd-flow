@@ -1,117 +1,87 @@
-# Prompt: Plan (RPI — Phase 2)
-
-Use this prompt to generate all planning artifacts for a spec.
-
+---
+schema_version: 2
+kind: procedure
+phase: plan
+description: Define scoped requirements, acceptance and cohesive tasks.
 ---
 
-## Agent instruction
+# Plan
 
-You will plan the implementation of an already-researched feature.
+Read the actual sources, applicable current capability contracts and code. Run sdd context ID --phase plan when available.
+Use the change mode from change.yaml. Resolve only ambiguities that affect behavior or scope; state routine technical assumptions.
+For a multi-feature request or oversized context packet, follow intake.md and propose cohesive linked deliveries.
 
-**Before starting, read:**
-- `agents/AGENTS.md`
-- `agents/PROJECT.md`
-- `agents/RULES.md`
-- `agents/specs/NNN-name/RESEARCH.md`
-- Check which files already exist in `agents/specs/NNN-name/`
+## Contract
 
-**Expected input:**
-- Spec number and name (e.g. `001-user-authentication`)
+SPEC.md front matter is the structured contract. Keep rationale and prose detail in its body.
+Preserve IDs when editing. Use local IDs qualified externally by the change ID.
 
+~~~yaml
 ---
-
-## Adaptive behavior
-
-| Situation | Action |
-|---|---|
-| SPEC.md does not exist | Create all artifacts from scratch |
-| SPEC.md exists, TASK.md does not | Generate only TASK.md and PROGRESS.md based on existing SPEC.md |
-| All artifacts exist | Review and update only what is incomplete or outdated |
-
+schema_version: 2
+artifact: spec
+id: 001-example
+requirements:
+  - id: REQ01
+    description: State an observable requirement, including important failure behavior.
+acceptance:
+  - id: AC01
+    covers: [REQ01]
+    description: State concrete inputs and expected outcomes.
+    method: automated
+    checks: [unit]
 ---
+~~~
 
-## Deliverables
-
-Generate the following files inside `agents/specs/NNN-name/`:
-
-### SPEC.md
-```markdown
-# SPEC — [Feature Name]
-
-## Goal
-What this feature delivers (refined from RESEARCH.md).
-
-## Entities involved
-Data structures created or modified, with full field list.
-
-## Business Rules
-Numbered list. Only rules that directly affect implementation.
-
-## Expected behaviors
-Per behavior: what triggers it, what it does, what the output is.
-
-## UI
-Describe components, states, interactions and validations.
-Write `N/A` if no UI is involved.
-
-## Out of scope
-Explicit list of what this spec does NOT cover.
-```
-
-### TASK.md
-```markdown
-# TASK — [Feature Name]
+Automated checks must name real checks configured in agents/config.yaml.
+Use method: manual or inspection for cases that require observed evidence rather than a command.
+Automated command success is execution evidence; review assertions to establish semantic coverage.
 
 ## Tasks
 
-- [ ] T01 — [Verb + object + target file] (e.g. Create User entity schema in config)
-  verify: [observable condition confirming completion — e.g. endpoint returns 201 with `id` field; returns 400 if `email` is missing]
-- [ ] T02 — ...
-  verify: [specific and testable condition — never "works correctly"]
-```
+Standard and rigorous modes use TASK.md. Light mode may omit it.
+Keep task status only in its front matter. One task is a cohesive verifiable outcome and may change multiple files.
 
-Task rules:
-- One task = one file created/modified, or one isolated function
-- Order must respect dependencies (schema → data layer → service → route → UI)
-- No circular dependencies between tasks
-- Preferred verbs: `Add`, `Create`, `Implement`, `Update`, `Extract`, `Register`
-- Each task must include a `verify:` line with a specific, observable condition — never "works correctly"
-
-### PROGRESS.md
-```markdown
-# PROGRESS — [Feature Name]
-
-## Status: 🔴 Not started
-
-## Tasks
-
-| Task | Status | Notes |
-|---|---|---|
-| T01 | Pending | |
-| T02 | Pending | |
-
-## History
-
-(updated during implementation)
-```
-
-### TEST.md
-```markdown
-# TEST — [Feature Name]
-
-## Acceptance Test Cases
-
-### TC01 — [Behavior being tested]
-- **Given** [initial state]
-- **When** [action performed]
-- **Then** [expected outcome]
-```
-
+~~~yaml
 ---
+schema_version: 2
+artifact: tasks
+id: 001-example
+tasks:
+  - id: T01
+    title: Implement the behavior and its regression checks.
+    status: pending
+    covers: [REQ01, AC01]
+    depends_on: []
+    verify: The acceptance scenario and relevant regression checks pass.
+---
+~~~
 
-## Constraints
+Plan tests with implementation; permit TDD and incremental verification.
+Use concrete initial-state/action/outcome examples in acceptance, including relevant failure/boundary cases.
+Follow config quality.tdd; use quality.md when defining strategy or project-specific gates.
+Classify external checks/criteria accurately before approval. Separate implementation from external-only verification tasks.
+Missing environment access calls for a safe user handoff, not mandatory production testing or an impossible completion gate.
+Allow many-to-many relationships among requirements, acceptance, tasks and tests.
+Retain cancelled records with status: cancelled and cancellation containing reason and by.
+Do not infer that cancellation requests deleting code.
 
-- Do not write code in this phase
-- Do not implement any task — only plan
-- If the RESEARCH.md has unresolved open questions, **stop and ask** before planning
-- After delivering all artifacts, **wait for approval** before advancing to Implement
+## Context and authorization
+
+In change.yaml select capabilities, decisions, skills and dependency spec IDs.
+Use context entries as a project-relative path or {path: ..., section: Exact heading}.
+Keep sources as paths or explicit path/section references to original requirements, which remain discoverable.
+Do not populate every project artifact merely because a template exists.
+For meaningful changes, add a short impact/regression note in SPEC's body: affected consumers/shared contracts,
+behavior to preserve, relevant regression checks and any migration/cache/integration considerations.
+Inspect only applicable areas; a small isolated change may need one sentence. Do not create a duplicate impact document.
+
+Run sdd check ID and fix structural gaps. Explain the outcome, assumptions and material choices.
+When the user has authorized this scope, record it with sdd approve ID --by NAME.
+Never claim a human authorization that did not occur. Follow the existing conversation's authorization;
+do not repeatedly ask for permission already given for the same scope.
+
+When an approved business rule or policy changes, update the contract and affected task definitions while
+preserving IDs. Run sdd revise ID --by NAME --reason REASON --dry-run to inspect impact, then record the revision.
+Affected completed tasks and their dependents are reopened; policy/prose changes may conservatively reopen all.
+Review and authorize the revised scope before continuing. Use a new linked spec for a separate deliverable.

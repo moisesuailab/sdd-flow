@@ -1,21 +1,5 @@
-# DECISIONS.md — Architectural Decisions Log
+# Decisions index
 
-Append-only log of decisions with global impact on the project.
-For decisions scoped to a single feature, use `agents/specs/NNN-*/DECISIONS.md`.
-
-**Rule:** never delete or modify existing entries. Only append.
-
----
-
-## Format
-
-```
-### [YYYY-MM-DD] Decision title
-**Context:** why this decision was needed
-**Decision:** what was decided
-**Consequences:** impacts and trade-offs
-```
-
----
-
-<!-- Record decisions below this line -->
+Keep this file as a short human navigation aid. Store individual current decisions in agents/decisions/.
+Each ADR uses kind: decision, status: active or superseded, and an explicit superseded_by link when applicable.
+Select relevant active ADR paths in change.yaml. Historical logs remain available on demand.

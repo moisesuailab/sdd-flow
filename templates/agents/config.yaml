@@ -1,0 +1,13 @@
+schema_version: 2
+mode: standard
+autonomy: batch
+approval: required
+documentation:
+  language: auto
+quality:
+  tdd: preferred
+context:
+  max_bytes: 48000
+checks: []
+verification:
+  exclude: []

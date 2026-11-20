@@ -1,0 +1,10 @@
+node_modules/
+coverage/
+*.tgz
+
+# Never commit credentials
+.env
+.env.*
+.npmrc
+*.pem
+*.key
