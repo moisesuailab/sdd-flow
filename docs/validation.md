@@ -16,7 +16,7 @@ Earlier 2.0 development results are retained where labeled historical; current a
 | Dependency audit | 0 reported vulnerabilities for the installed runtime dependency set |
 | Diff whitespace validation | Passed |
 | npm publication dry run (no registry write) | Passed |
-| Exact version/channel and public-registry availability preflight | Passed for 2.1.0 with next |
+| Exact version/channel and public-registry availability preflight | Passed for 2.2.0 with next |
 
 The automated suite exercises actual passing/failing test processes, stale scope/evidence,
 partial verification, manual/inspection closure, preservation/conflict handling,
@@ -95,7 +95,7 @@ tarball smoke test from creating its temporary artifact; the test explicitly iso
 
 ## Limits and pending release checks
 
-- CI runs ubuntu and windows on Node.js 22 and 24; the 2.1.0 commit passed all four jobs before publication.
+- CI runs ubuntu and windows on Node.js 22 and 24; each release commit is published only after all four jobs pass.
 - Releases are published manually from a maintainer terminal (no provenance attestation) or by the OIDC workflow.
 - Trusted publishing must be configured by the package owner before the manual release workflow can publish.
 - Claude Code and OpenCode applications were not installed. Layouts and metadata were tested;
