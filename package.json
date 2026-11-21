@@ -11,6 +11,7 @@
     "lib/",
     "templates/",
     "docs/",
+    "!docs/guia-agentes.pt-BR.md",
     "CHANGELOG.md",
     "README.pt-BR.md",
     "CONTRIBUTING.md"

@@ -390,6 +390,7 @@ Veja o [guia de migração](docs/migration.md).
 | Quero… | Consultar |
 |---|---|
 | Usar o fluxo do início ao fim | [Guia de uso](docs/usage.pt-BR.md) |
+| Trabalhar com agentes de IA (comandos, prompts prontos, exemplo) | [Guia para agentes](docs/guia-agentes.pt-BR.md) |
 | Entender setup, perguntas e documentos | [Setup e referências](docs/setup-documents.pt-BR.md) |
 | Conhecer o método e a evolução | [Metodologia](docs/methodology.pt-BR.md) |
 | Configurar qualidade e testes externos | [Quality gates](docs/quality-gates.pt-BR.md) |
