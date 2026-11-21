@@ -1,12 +1,12 @@
 # Testes locais antes de publicar
 
-Este roteiro testa a versão 2.0.0 baixada, sem depender da versão pública no npm.
+Este roteiro testa o código-fonte da versão 2.x deste checkout, sem depender do pacote publicado no npm.
 Exemplos: PowerShell no Windows. Requer Git e Node.js 22+; Node 24 pode ser usado para validar.
 Mantenha os laboratórios fora da pasta do framework. Use cópia/branch para aplicações reais.
 
 ## 1. Validar o pacote
 
-Extraia o ZIP e abra a pasta que contém package.json:
+Abra a pasta do checkout que contém package.json:
 
 ~~~powershell
 node --version
@@ -90,7 +90,7 @@ Leia agents/SETUP.md e configure este projeto de laboratório.
 Vamos criar uma biblioteca Node.js pequena, sem dependências externas.
 Escreva os documentos do projeto em português brasileiro, em UTF-8, com acentos.
 Registre apenas escolhas conhecidas. Nesta etapa configure o fluxo, sem implementar.
-Use o CLI 2.0.0 que indiquei; não execute a versão pública 1.3.3 por engano.
+Use o CLI 2.x que indiquei; não execute a versão pública 1.3.3 por engano.
 ~~~
 
 Depois peça:
@@ -184,12 +184,13 @@ npm pack
 Se quiser trocar a instalação global, em outro terminal instale o caminho exato do tarball:
 
 ~~~powershell
-npm install -g 'C:\caminho\sdd-flow-2.0.0.tgz'
+npm pack
+npm install -g '.\sdd-flow-<versão>.tgz'
 sdd --version
 ~~~
 
 Confira Get-Command sdd e repita init/context no laboratório.
 Para restaurar uma versão global anterior, instale explicitamente aquela versão.
-Não instale sdd-flow@next antes de existir a publicação desejada.
+Para testar o pacote já publicado, use sdd-flow@next (ou sdd-flow, quando a 2.x for latest).
 
-Após os testes, siga releases.pt-BR.md para enviar a branch, revisar o PR e publicar.
+Após os testes, siga releases.pt-BR.md para publicar uma nova versão.

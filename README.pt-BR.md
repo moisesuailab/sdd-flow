@@ -51,31 +51,32 @@ O framework serve tanto para **projetos novos** quanto para **aplicações em de
 
 ## Comece em 3 passos
 
-> **Versão deste README: 2.x.** A publicação no npm é uma etapa separada. Para testar esta entrega antes da publicação, use o código-fonte ou o pacote local. Confira a versão com `sdd --version`.
+> **Versão deste README: 2.x**, uma evolução com quebra de compatibilidade em relação à 1.x (veja a [migração](docs/migration.md)). Confira a versão com `sdd --version`.
 
 ### 1. Instale o CLI
 
-Na pasta do código-fonte do **sdd-flow**, com Node.js 22+:
+Com Node.js 22+:
+
+```sh
+npm install -g sdd-flow
+sdd --version
+```
+
+<details>
+<summary>Outras opções: executar sem instalar ou pelo código-fonte</summary>
+
+Executar sem instalação global:
+
+```sh
+npx sdd-flow@latest --help
+```
+
+Pelo código-fonte do **sdd-flow** (para quem contribui):
 
 ```sh
 npm ci
 npm link
 sdd --version
-```
-
-<details>
-<summary>Outras opções: pacote local ou npm</summary>
-
-Com o tarball fornecido pelo mantenedor:
-
-```sh
-npm install -g ./sdd-flow-2.0.0.tgz
-```
-
-Depois que uma versão 2.x estiver publicada:
-
-```sh
-npm install -g sdd-flow@2
 ```
 
 Instalar o pacote disponibiliza o CLI. Os arquivos do método entram em cada aplicação ao executar `sdd init`.
@@ -317,7 +318,7 @@ Specs, skills próprias, documentos em `docs/` e histórico não são apagados p
 Se o setup foi concluído e removido, a manutenção normal não o recria.
 
 Antes de atualizar, preserve o estado atual em commit ou backup. Instale a versão desejada do CLI
-— pelo pacote local durante os testes ou pelo npm após a publicação — e, dentro da aplicação, execute:
+— pelo npm ou, para testes, pelo código-fonte — e, dentro da aplicação, execute:
 
 ```sh
 sdd --version

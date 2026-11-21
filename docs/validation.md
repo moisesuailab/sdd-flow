@@ -1,7 +1,9 @@
 # Implementation validation
 
 Date: 2026-11-20. Source baseline: d84c62d51d9c566b0f3e8a6279418220e0fc6e8f (1.3.3).
-This source prepares 2.0.0; no npm or marketplace release was published.
+Results below were observed while preparing 2.0.0 and re-run (88 tests, package check, audit) for 2.0.1.
+2.0.0 and 2.0.1 are published to npm under the `next` dist-tag first; `latest` is promoted manually.
+No marketplace release was published.
 
 ## Observed automated results
 

@@ -1,7 +1,7 @@
 # Guia de uso do sdd-flow
 
-Este guia descreve a evolução 2.x deste checkout. Em 20/11/2026 o registro público ainda anuncia 1.3.3 como latest.
-Os comandos novos ficam disponíveis depois de instalar este checkout ou uma publicação 2.x.
+Este guia descreve a evolução 2.x. Os comandos novos ficam disponíveis ao instalar o pacote 2.x
+(`npm install -g sdd-flow`, ou `sdd-flow@next` enquanto a 2.x não for a tag `latest`) ou este checkout.
 O CLI precisa de Node.js 22+, mas o projeto desenvolvido pode usar outra linguagem ou plataforma.
 
 O objetivo é metodológico: organização, contexto pertinente e rastreabilidade. O fluxo não cria um orquestrador.
@@ -293,10 +293,10 @@ O digest detecta mudança de inputs; não autentica a identidade de um revisor n
 ## 8. Instalar uma versão nova do framework
 
 Publicar no npm e atualizar arquivos copiados nos aplicativos são operações diferentes.
-Depois de uma publicação 2.x para next:
+Para instalar a 2.x publicada (use `sdd-flow@next` se `latest` ainda aponta para a 1.x):
 
 ~~~sh
-npm install -g sdd-flow@next
+npm install -g sdd-flow
 sdd --version
 cd /caminho/do/aplicativo
 sdd update --dry-run

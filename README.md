@@ -51,31 +51,32 @@ Use the method for **new projects** or **existing applications**, with any appli
 
 ## Get started in 3 steps
 
-> **This README describes 2.x.** npm publication is a separate release action. Before publication, test the source checkout or the supplied local package. Confirm your CLI with `sdd --version`.
+> **This README describes 2.x**, a breaking evolution from 1.x (see [migration](docs/migration.md)). Confirm your CLI with `sdd --version`.
 
 ### 1. Install the CLI
 
-Inside the **sdd-flow source checkout**, with Node.js 22+:
+With Node.js 22+:
+
+```sh
+npm install -g sdd-flow
+sdd --version
+```
+
+<details>
+<summary>Other options: run without installing, or from source</summary>
+
+Run without a global install:
+
+```sh
+npx sdd-flow@latest --help
+```
+
+From the **sdd-flow source checkout** (for contributors):
 
 ```sh
 npm ci
 npm link
 sdd --version
-```
-
-<details>
-<summary>Other options: local package or npm</summary>
-
-With the tarball supplied by the maintainer:
-
-```sh
-npm install -g ./sdd-flow-2.0.0.tgz
-```
-
-After a 2.x version has been published:
-
-```sh
-npm install -g sdd-flow@2
 ```
 
 Installing the package provides the CLI. Project files are installed by running `sdd init` inside each application.
