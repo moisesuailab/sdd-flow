@@ -6,8 +6,9 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const io = require('../lib/io');
+const md = require('../lib/markdown');
 const project = require('../lib/project');
-const { install, doctor, migrate } = require('../lib/install');
+const { install, doctor, migrate, migrateSkills } = require('../lib/install');
 const { harness, exportBundle } = require('../lib/adapters');
 const { fixture, editConfig } = require('../test-support/project');
 
@@ -114,6 +115,35 @@ test('legacy migration preserves source bodies and never fabricates acceptance, 
   assert.equal(migrated.change.status, 'draft');
   assert.match(io.read(root, result.backup + '/agents/specs/002-legacy/SPEC.md'), /original thing/);
   assert.match(io.read(root, 'agents/specs/002-legacy/SPEC.md'), /legacy: true/);
+});
+
+test('migrating a spec without SPEC.md fails clearly before writing anything', t => {
+  const { root } = fixture(t);
+  io.write(root, 'agents/specs/003-empty/TASK.md', '# Tasks\n');
+  assert.throws(() => migrate(root, '003-empty', { dryRun: true }), /SPEC\.md is missing/);
+  assert.throws(() => migrate(root, '003-empty'), /SPEC\.md is missing/);
+  assert.equal(io.exists(root, 'agents/specs/003-empty/change.yaml'), false);
+});
+
+test('legacy skills are migrated with backup, preserved bodies and a derived description; invalid names are skipped', t => {
+  const { root } = fixture(t);
+  io.write(root, 'agents/skills/auth/SKILL.md', '# Skill: Auth\n\n## When to use this skill\nLoad when writing\r\nprotected functions.\n\n## Patterns\nBODY_MARKER\n');
+  io.write(root, 'agents/skills/bare/SKILL.md', '# Bare skill\nNo guidance section.\n');
+  io.write(root, 'agents/skills/Bad_Name/SKILL.md', '# Bad\n');
+  io.write(root, 'agents/skills/modern/SKILL.md', md.markdown({ name: 'modern', description: 'Already valid.' }, '# Modern'));
+  assert.throws(() => project.skills(root), /sdd skills migrate/);
+  const plan = migrateSkills(root, { dryRun: true });
+  assert.deepEqual(plan.skills.map(s => s.name).sort(), ['auth', 'bare']);
+  assert.equal(plan.skipped.length, 1);
+  assert.doesNotMatch(io.read(root, 'agents/skills/auth/SKILL.md'), /^---/);
+  const result = migrateSkills(root);
+  assert.match(io.read(root, result.backup + '/agents/skills/auth/SKILL.md'), /^# Skill: Auth/);
+  assert.match(io.read(root, 'agents/skills/auth/SKILL.md'), /BODY_MARKER/);
+  fs.rmSync(path.join(root, 'agents/skills/Bad_Name'), { recursive: true });
+  const catalog = project.skills(root);
+  assert.equal(catalog.find(s => s.name === 'auth').description, 'Load when writing protected functions.');
+  assert.match(catalog.find(s => s.name === 'bare').description, /Legacy skill bare/);
+  assert.equal(migrateSkills(root).skills.length, 0);
 });
 
 test('read-only dry runs do not acquire mutation locks or create an installation', t => {

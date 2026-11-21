@@ -26,6 +26,22 @@ test('CLI exposes strict arguments, JSON diagnostics and nonzero check failure',
   }
 });
 
+test('CLI context budget: warn exits 0, strict exits 1, inspect exits 0, invalid mode rejected', t => {
+  const { root, spec } = fixture(t);
+  io.write(root, 'domain.md', 'x'.repeat(12000));
+  spec.change.context = ['domain.md'];
+  require('../lib/project').writeChange(root, spec);
+  const base = ['context', spec.id, '--max-bytes', '1024', '--json'];
+  const warned = cli(root, base);
+  assert.equal(warned.status, 0, warned.stderr);
+  assert.equal(JSON.parse(warned.stdout).fits_budget, false);
+  const strict = cli(root, [...base, '--budget-mode', 'strict']);
+  assert.equal(strict.status, 1);
+  assert.match(strict.stdout, /CONTEXT_BUDGET_EXCEEDED|exceeds budget/);
+  assert.equal(cli(root, [...base, '--budget-mode', 'strict', '--inspect']).status, 0);
+  assert.equal(cli(root, [...base, '--budget-mode', 'loose']).status, 1);
+});
+
 test('mutations are serialized while readers remain available', t => {
   const { root, spec } = fixture(t);
   io.write(root, 'agents/.sdd/lock', '{"pid":123,"started":"test"}');

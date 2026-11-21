@@ -31,6 +31,7 @@ autonomy: step
 approval: required
 context:
   max_bytes: 48000
+  budget_mode: warn   # optional; warn (default) keeps oversized packets, strict refuses them
 checks:
   - name: unit
     command: node --test

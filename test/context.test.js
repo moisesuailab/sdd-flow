@@ -6,7 +6,7 @@ const io = require('../lib/io');
 const md = require('../lib/markdown');
 const project = require('../lib/project');
 const { context } = require('../lib/context');
-const { fixture, editMarkdown } = require('../test-support/project');
+const { fixture, editMarkdown, editConfig } = require('../test-support/project');
 
 test('task context selects relevant acceptance and skills without loading history or every skill body', t => {
   const { root, spec } = fixture(t);
@@ -43,8 +43,43 @@ test('overflow fails without silently dropping contracts or truncating a documen
   io.write(root, 'domain.md', 'x'.repeat(12000));
   spec.change.context = ['domain.md'];
   project.writeChange(root, spec);
-  assert.throws(() => context(root, spec.id, { maxBytes: 1024 }), /Nothing was silently truncated/);
-  assert.match(context(root, spec.id, { maxBytes: 60000 }).content, /x{12000}/);
+  assert.throws(() => context(root, spec.id, { maxBytes: 1024, budgetMode: 'strict' }), /Nothing was silently truncated/);
+  assert.match(context(root, spec.id, { maxBytes: 60000, budgetMode: 'strict' }).content, /x{12000}/);
+});
+
+test('warn mode (default) keeps the full oversized packet with a warning; strict comes from config or option', t => {
+  const { root, spec } = fixture(t);
+  io.write(root, 'domain.md', 'x'.repeat(12000));
+  spec.change.context = ['domain.md'];
+  project.writeChange(root, spec);
+  const packet = context(root, spec.id, { maxBytes: 1024 });
+  assert.match(packet.content, /x{12000}/);
+  assert.equal(packet.fits_budget, false);
+  assert.equal(packet.budget_mode, 'warn');
+  assert.ok(packet.warnings.some(text => text.includes('advisory budget')));
+  assert.match(packet.content, /advisory budget/);
+  editConfig(root, cfg => { cfg.context.budget_mode = 'strict'; });
+  assert.throws(() => context(root, spec.id, { maxBytes: 1024 }), error => error.code === 'CONTEXT_BUDGET_EXCEEDED');
+  assert.equal(context(root, spec.id, { maxBytes: 1024, budgetMode: 'warn' }).fits_budget, false);
+  assert.equal(context(root, spec.id, { maxBytes: 1024, inspect: true }).fits_budget, false);
+  assert.throws(() => context(root, spec.id, { budgetMode: 'loose' }), /Budget mode/);
+  editConfig(root, cfg => { cfg.context.budget_mode = 'loose'; });
+  assert.throws(() => project.config(root), /budget_mode/);
+});
+
+test('referenced files above 2 MiB load whole or by section; internal reads keep the limit', t => {
+  const { root, spec } = fixture(t);
+  io.write(root, 'big.md', '# Big\n\n## Wanted\nWANTED_TEXT\n\n## Rest\n' + 'y'.repeat(3 * 1024 * 1024));
+  spec.change.context = [{ path: 'big.md', section: 'Wanted' }];
+  project.writeChange(root, spec);
+  const packet = context(root, spec.id, { maxBytes: 1024 });
+  assert.match(packet.content, /WANTED_TEXT/);
+  assert.doesNotMatch(packet.content, /y{100}/);
+  assert.ok(project.inputDigest(root, project.loadSpec(root, spec.id)).digest);
+  spec.change.context = ['big.md'];
+  project.writeChange(root, spec);
+  assert.match(context(root, spec.id, { maxBytes: 1024 }).content, /y{1000}/);
+  assert.throws(() => io.read(root, 'big.md'), /exceeds 2 MiB/);
 });
 
 test('inactive decisions and malformed skill catalogs are reported', t => {
@@ -67,7 +102,7 @@ test('context inspection and overflow diagnostics expose sizes and remedies with
   assert.ok(summary.documents.some(doc => doc.path === 'large.md' && doc.bytes > 1000));
   assert.ok(summary.suggestions.some(text => text.includes('linked specs')));
   assert.doesNotMatch(JSON.stringify(summary), /PRIVATE_REFERENCE_BODY/);
-  assert.throws(() => context(root, spec.id, { maxBytes: 1024 }), error =>
+  assert.throws(() => context(root, spec.id, { maxBytes: 1024, budgetMode: 'strict' }), error =>
     error.code === 'CONTEXT_BUDGET_EXCEEDED' && error.diagnostics.fits_budget === false);
 });
 

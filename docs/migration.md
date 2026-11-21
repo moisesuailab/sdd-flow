@@ -18,6 +18,20 @@ Review them before using sdd update --replace-managed. Replaced contents are bac
 Do not use replacement as an automatic resolution for project-specific requirements.
 Move durable rules to the project map, current contracts or ADRs, then review the new core.
 
+## Migrate legacy skills
+
+1.x skills have no YAML front matter, which 2.x requires (name and description). Until they are migrated,
+sdd doctor, sdd skills list and sdd context fail.
+
+~~~sh
+sdd skills migrate --dry-run
+sdd skills migrate
+~~~
+
+The command adds name (the folder name) and description (taken from "When to use", or a placeholder), keeps the body,
+and backs up the originals under agents/.sdd/backups/. Review each description: it controls when the skill is selected.
+Folders whose names are not valid skill names are reported and skipped; rename them and rerun.
+
 ## Migrate each legacy change
 
 ~~~sh

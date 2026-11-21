@@ -16,8 +16,8 @@ const HELP = [
   'sdd init [--mode light|standard|rigorous] [--harness claude-code|opencode] [--docs]',
   'sdd docs [--types prd,roadmap,sd,ds,adr] [--dry-run]',
   'sdd new <name> [--mode light|standard|rigorous]',
-  'sdd context <spec> [--phase implement] [--task T01] [--inspect] [--max-bytes N] [--json]',
-  'sdd skills list | show <name>',
+  'sdd context <spec> [--phase implement] [--task T01] [--inspect] [--max-bytes N] [--budget-mode warn|strict] [--json]',
+  'sdd skills list | show <name> | migrate [--dry-run]',
   'sdd check <spec> [--phase plan|implement|validate|close] [--final] [--json]',
   'sdd approve <spec> --by <name>',
   'sdd revise <spec> --by <name> --reason <reason> [--dry-run]',
@@ -47,7 +47,7 @@ const HELP = [
 const OPTIONS = {
   json: { type: 'boolean' }, help: { type: 'boolean', short: 'h' }, version: { type: 'boolean', short: 'v' },
   mode: { type: 'string' }, harness: { type: 'string' }, phase: { type: 'string' }, task: { type: 'string' },
-  'max-bytes': { type: 'string' }, final: { type: 'boolean' }, by: { type: 'string' },
+  'max-bytes': { type: 'string' }, 'budget-mode': { type: 'string' }, final: { type: 'boolean' }, by: { type: 'string' },
   out: { type: 'string' }, scope: { type: 'string' }, evidence: { type: 'string' },
   note: { type: 'string' }, archive: { type: 'boolean' }, reason: { type: 'string' },
   'dry-run': { type: 'boolean' }, 'replace-managed': { type: 'boolean' }, remove: { type: 'boolean' },
@@ -57,8 +57,8 @@ const OPTIONS = {
   name: { type: 'string' }, number: { type: 'string' }, permanent: { type: 'boolean' }, all: { type: 'boolean' },
 };
 const ALLOWED = {
-  init: ['mode', 'harness', 'docs'], docs: ['types', 'dry-run'], new: ['mode'], context: ['phase', 'task', 'max-bytes', 'inspect'],
-  skills: [], check: ['phase', 'final'], approve: ['by'], evidence: ['out'], handoff: [], verify: ['scope', 'evidence', 'handoff', 'run-external'],
+  init: ['mode', 'harness', 'docs'], docs: ['types', 'dry-run'], new: ['mode'], context: ['phase', 'task', 'max-bytes', 'budget-mode', 'inspect'],
+  skills: ['dry-run'], check: ['phase', 'final'], approve: ['by'], evidence: ['out'], handoff: [], verify: ['scope', 'evidence', 'handoff', 'run-external'],
   close: ['by', 'note', 'archive'], reopen: ['by', 'reason'], cancel: ['by', 'reason'],
   status: ['all'], doctor: [], update: ['dry-run', 'replace-managed'], migrate: ['dry-run'],
   harness: ['remove', 'dry-run'], export: ['out'],
@@ -103,8 +103,9 @@ async function main(argv = process.argv.slice(2), root = process.cwd()) {
       }
       case 'docs': return require('../lib/documents').scaffold(root, { types: values.types, dryRun: values['dry-run'] });
       case 'new': return project.createSpec(root, first, values.mode);
-      case 'context': return require('../lib/context').context(root, first, { phase: values.phase, task: values.task, maxBytes: values['max-bytes'] ? Number(values['max-bytes']) : undefined, inspect: values.inspect });
+      case 'context': return require('../lib/context').context(root, first, { phase: values.phase, task: values.task, maxBytes: values['max-bytes'] ? Number(values['max-bytes']) : undefined, budgetMode: values['budget-mode'], inspect: values.inspect });
       case 'skills': {
+        if (first === 'migrate') return installation.migrateSkills(root, { dryRun: values['dry-run'] });
         const catalog = project.skills(root);
         if (first === 'list') return catalog;
         if (first === 'show' && second) {
@@ -112,7 +113,7 @@ async function main(argv = process.argv.slice(2), root = process.cwd()) {
           if (!found) throw new Error('Unknown skill: ' + second);
           return { ...found, content: io.read(root, found.path) };
         }
-        throw new Error('Use sdd skills list or sdd skills show <name>');
+        throw new Error('Use sdd skills list, sdd skills show <name> or sdd skills migrate');
       }
       case 'check': {
         const result = validation.check(root, first, { phase: values.phase, final: values.final });
@@ -191,7 +192,8 @@ async function main(argv = process.argv.slice(2), root = process.cwd()) {
       case 'export': return adapters.exportBundle(root, first, values.out);
     }
   }
-  const result = await (mutating.has(command) && !values['dry-run'] ? io.locked(root, action) : action());
+  const writes = mutating.has(command) || (command === 'skills' && first === 'migrate');
+  const result = await (writes && !values['dry-run'] ? io.locked(root, action) : action());
   if (!values.json && typeof result.content === 'string') console.log(result.content);
   else console.log(JSON.stringify(result, null, 2));
   if (result.valid === false || result.verdict === 'failed' || result.conflicts?.length) return 1;

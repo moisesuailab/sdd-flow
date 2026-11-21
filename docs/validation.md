@@ -1,6 +1,6 @@
 # Implementation validation
 
-Date: 2026-11-20. Current source baseline: f209b37850634c34379898f83fff039ba267342f (published 2.0.1).
+Date: 2026-11-21. Source baseline: 5788679b69fea948c4fa89f8f70feff99a388ba5 (published 2.1.0).
 This release is 2.1.0. No marketplace release was published.
 Earlier 2.0 development results are retained where labeled historical; current automated results follow.
 
@@ -8,8 +8,8 @@ Earlier 2.0 development results are retained where labeled historical; current a
 
 | Environment/check | Result |
 |---|---|
-| Linux, Node.js 24.22.3 | 114 tests passed |
-| Linux, Node.js 22.23.5 | 114 tests passed |
+| CI: ubuntu and windows, Node.js 24 | 119 tests passed |
+| CI: ubuntu and windows, Node.js 22 | 119 tests passed |
 | Package syntax/template/export contracts | Passed |
 | Real npm tarball installed in a separate temporary consumer | Passed on both tested Node versions |
 | CLI initialization from a path containing spaces | Passed |

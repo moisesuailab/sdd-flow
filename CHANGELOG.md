@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.2.0 — 2026-11-21
+
+- Context budget is advisory by default: `context.budget_mode: warn|strict` and `sdd context --budget-mode`. Existing projects without the field now receive oversized packets with a warning instead of CONTEXT_BUDGET_EXCEEDED; set `strict` to keep the old behavior.
+- Referenced context/source files may exceed 2 MiB (up to 64 MiB); config, manifests and internal files keep the 2 MiB limit.
+- Add `sdd skills migrate [--dry-run]`: adds the required front matter to legacy 1.x skills (backup kept, bodies preserved, description derived from "When to use"). Legacy skills now fail with a message pointing to it.
+- `sdd migrate` refuses a spec folder without SPEC.md with a clear error instead of leaving a manifest that breaks `sdd context`.
+- Intake/plan guidance no longer treats size alone as a reason to split a spec.
+
 ## 2.1.0 — 2026-11-21
 
 - Decouple stable spec identity from directory names and visual numbering; preserve existing schema 2 IDs.

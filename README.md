@@ -169,7 +169,7 @@ flowchart TD
     C["Relevant docs/ references"] --> D
     D --> E{"Within budget?"}
     E -->|"Yes"| F["Provide context to the agent"]
-    E -->|"No"| G["Review sources, sections and scope"]
+    E -->|"No (warning in warn, refusal in strict)"| G["Review sources, sections and scope"]
     G --> D
 ```
 
@@ -187,8 +187,9 @@ sdd context 001-my-change --phase implement --task T01 --inspect
 Inspection reports sizes without emitting document bodies. The default budget is **48,000 UTF-8 bytes**,
 configurable. It is not a token count or the complete chat context window.
 
-Generating an oversized packet reports the problem **without silently truncating content**.
-The agent can select sections, review references or split independent deliverables.
+An oversized packet is never silently truncated. By default (`context.budget_mode: warn`) it is returned in full
+with a warning; `strict` (or `--budget-mode strict`) refuses it instead. Full packets depend on available memory
+and the harness's capacity. The agent can select sections or review references; size alone does not justify splitting.
 
 Selection depends on maintained references. The CLI cannot infer every semantic dependency or control chat history.
 

@@ -169,7 +169,7 @@ flowchart TD
     C["Referências pertinentes de docs/"] --> D
     D --> E{"Cabe no orçamento?"}
     E -->|"Sim"| F["Entregar pacote ao agente"]
-    E -->|"Não"| G["Revisar fontes, seções e escopo"]
+    E -->|"Não (aviso em warn, recusa em strict)"| G["Revisar fontes, seções e escopo"]
     G --> D
 ```
 
@@ -186,7 +186,7 @@ sdd context 001-minha-mudanca --phase implement --task T01 --inspect
 
 A inspeção mostra o tamanho e os documentos contribuintes, sem emitir seus corpos. O orçamento padrão é **48.000 bytes**, configurável; não é uma contagem de tokens nem o limite total da conversa.
 
-Se o pacote ultrapassar o orçamento, a geração informa o problema **sem truncar conteúdo silenciosamente**. O agente pode selecionar seções, revisar referências ou separar entregas independentes.
+Um pacote grande nunca é truncado silenciosamente. Por padrão (`context.budget_mode: warn`) ele é entregue completo, com um aviso; `strict` (ou `--budget-mode strict`) o recusa. Pacotes completos dependem da memória disponível e da capacidade do harness. O agente pode selecionar seções ou revisar referências; tamanho, por si só, não justifica separar uma spec.
 
 A seleção depende de referências bem mantidas. O CLI não descobre sozinho todos os efeitos de uma mudança nem controla o histórico do chat.
 

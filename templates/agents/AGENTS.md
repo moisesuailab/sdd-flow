@@ -54,6 +54,8 @@ Full limited verification can close implementation with pending external checks 
 It does not claim external success or authorize deployment. Read prompts/quality.md for BDD/TDD and handoff details.
 
 For oversized requests use prompts/intake.md and sdd context ID --inspect.
+The context budget (context.max_bytes) is advisory by default (budget_mode: warn): it warns but keeps the full packet.
+It does not limit file sizes or the model's context window; use budget_mode: strict to refuse oversized packets.
 For changed approved requirements, revise the contract/plan and run sdd revise ID --dry-run,
 then record the revision, review impacted tasks and obtain authorization for the new scope.
 

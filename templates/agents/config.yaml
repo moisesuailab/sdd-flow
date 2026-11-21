@@ -8,6 +8,7 @@ quality:
   tdd: preferred
 context:
   max_bytes: 48000
+  budget_mode: warn
 checks: []
 verification:
   exclude: []

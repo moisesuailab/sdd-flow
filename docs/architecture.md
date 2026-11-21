@@ -32,11 +32,13 @@ Only explicit skill selections load bodies; the catalog carries descriptions wit
 Sources/research are included during research/plan and remain available on demand otherwise.
 
 Large documents can be selected by an exact ATX heading. Heading extraction ignores fenced code;
-it ends at the next heading of equal or higher level. The packet fails on overflow and reports file sizes.
-It measures UTF-8 bytes rather than estimating model tokens. The default budget is a project setting,
-not a universal optimum.
-Use --inspect to get sizes/remedies without emitting bodies. Generating an over-budget packet raises
-CONTEXT_BUDGET_EXCEEDED; this is a recoverable selection checkpoint, not a failure of the application.
+it ends at the next heading of equal or higher level. The budget measures UTF-8 bytes rather than estimating
+model tokens. The default budget is a project setting, not a universal optimum.
+`context.budget_mode` (default `warn`, override with `--budget-mode`) controls overflow: `warn` returns the full
+untruncated packet with a warning and `fits_budget: false`; `strict` raises CONTEXT_BUDGET_EXCEEDED, a recoverable
+selection checkpoint. Full packets depend on available memory and the harness's capacity.
+Use --inspect to get sizes/remedies without emitting bodies. Referenced context/source files may reach 64 MiB;
+config, manifests and other internal files keep the 2 MiB limit.
 The framework cannot intercept arbitrary chat input; intake guidance handles broad requests at the agent level.
 
 No vector database or model API is required. The agent can inspect additional code and sources

@@ -9,7 +9,8 @@ description: Define scoped requirements, acceptance and cohesive tasks.
 
 Read the actual sources, applicable current capability contracts and code. Run sdd context ID --phase plan when available.
 Use the change mode from change.yaml. Resolve only ambiguities that affect behavior or scope; state routine technical assumptions.
-For a multi-feature request or oversized context packet, follow intake.md and propose cohesive linked deliveries.
+For a multi-feature request, follow intake.md and propose cohesive linked deliveries. An oversized context packet alone
+does not justify splitting a spec; narrow it by task or section first.
 
 ## Contract
 

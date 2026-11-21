@@ -155,7 +155,9 @@ sdd context 001-exportar-dados --phase implement --task T01 --inspect
 
 A inspeção mostra tamanho, documentos contribuintes, se o pacote cabe e sugestões, sem incluir seus corpos.
 A inspeção termina normalmente mesmo se o pacote exceder o orçamento; ela é diagnóstica.
-A geração do pacote completo excedido termina com erro CONTEXT_BUDGET_EXCEEDED e código de saída 1.
+O orçamento é orientativo por padrão (`context.budget_mode: warn`, ou `--budget-mode warn`): o pacote completo é gerado
+com um aviso e `fits_budget: false`. Com `strict` (config ou `--budget-mode strict`), o pacote excedido termina com erro
+CONTEXT_BUDGET_EXCEEDED e código de saída 1. Pacotes completos dependem da memória e da capacidade do harness.
 Isso não modifica arquivos, não remove requisitos e não reprova a aplicação.
 
 O agente deve então:
