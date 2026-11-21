@@ -1,100 +1,386 @@
+<div align="center">
+
 # sdd-flow
 
-Framework de processo para desenvolvimento assistido por IA, com contexto selecionado por tarefa,
-rastreabilidade e verificação vinculada à versão testada.
+### Um fluxo claro para desenvolver com IA.
 
-Este checkout prepara a versão 2.0.0. A publicação no npm é uma ação de release separada.
-O foco é metodológico: organização, contexto pertinente e rastreabilidade, sem criar um orquestrador.
-Requer Node.js 22 ou superior. Para testar este código:
+Contexto relevante para o agente.<br>
+Mudanças bem definidas para você.<br>
+Histórico rastreável para o projeto.
 
-~~~sh
+![Node.js 22 ou superior](https://img.shields.io/badge/Node.js-%E2%89%A5%2022-417E38)
+![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-2563EB)
+![Metodologia portátil](https://img.shields.io/badge/metodologia-independente%20de%20stack-475569)
+
+[English](README.md) · [Começar](#comece-em-3-passos) · [Entender o fluxo](#como-funciona) · [Contexto](#como-o-contexto-permanece-enxuto) · [Documentação](#documentação)
+
+</div>
+
+---
+
+**O sdd-flow organiza o desenvolvimento assistido por IA em mudanças pequenas o suficiente para entender, implementar e verificar.**
+
+Você descreve o que precisa. O agente consulta as referências pertinentes, prepara uma spec, implementa o escopo autorizado e registra os resultados. O conhecimento e o andamento permanecem no repositório, disponíveis para a próxima sessão.
+
+| Organização | Contexto | Rastreabilidade |
+|---|---|---|
+| Uma spec por mudança coesa | Fontes selecionadas por fase e tarefa | Requisitos, tarefas, decisões e verificações conectados |
+
+**No dia a dia, seu foco continua na spec.** O agente e o CLI mantêm os registros de apoio. Configuração, skills e documentos gerais são consultados quando pertinentes.
+
+## Como funciona
+
+```mermaid
+flowchart TD
+    A["Você descreve a mudança"] --> B["Agente pesquisa e planeja"]
+    B --> C["Você revisa o escopo"]
+    C --> D["Agente implementa e verifica"]
+    D --> E{"Resultado"}
+    E -->|"Precisa de ajuste"| D
+    E -->|"Pronto para encerrar"| F["Consolidar e registrar a entrega"]
+    D -. "Regra mudou" .-> B
+```
+
+**Pesquisar → planejar → implementar → validar → encerrar.** As etapas são responsabilidades do trabalho; podem acontecer na mesma conversa.
+
+- **Antes:** esclarecer o objetivo, definir aceitação e considerar impactos.
+- **Durante:** executar tarefas coesas e verificar regressões.
+- **Depois:** registrar o que foi observado e atualizar o conhecimento vigente.
+
+O framework serve tanto para **projetos novos** quanto para **aplicações em desenvolvimento**, com qualquer stack. Node.js 22+ é necessário para o CLI, não para a aplicação que você está construindo.
+
+## Comece em 3 passos
+
+> **Versão deste README: 2.x.** A publicação no npm é uma etapa separada. Para testar esta entrega antes da publicação, use o código-fonte ou o pacote local. Confira a versão com `sdd --version`.
+
+### 1. Instale o CLI
+
+Na pasta do código-fonte do **sdd-flow**, com Node.js 22+:
+
+```sh
 npm ci
 npm link
-cd /caminho/do/projeto
-sdd init --harness claude-code
-~~~
+sdd --version
+```
 
-Também há adaptador para OpenCode: sdd harness opencode.
-Complete agents/SETUP.md, configure os comandos reais em agents/config.yaml e execute sdd doctor.
+<details>
+<summary>Outras opções: pacote local ou npm</summary>
 
-## Princípios
+Com o tarball fornecido pelo mantenedor:
 
-- Mantenha o AGENTS.md curto, com navegação para os documentos relevantes.
-- Separe conhecimento vigente, mudança ativa e histórico.
-- Descubra skills por name e description; carregue seu corpo quando necessário.
-- Use tarefas por resultado verificável, podendo alterar vários arquivos.
-- Escolha modo light, standard ou rigorous e autonomia step ou batch.
-- Mantenha o estado das tarefas apenas no front matter de TASK.md.
-- Aprove o escopo autorizado, sem exigir aprovações de arquivos de progresso vazios.
-- Verifique com comandos reais e evidência de execução. Testes manuais podem passar.
-- Diferencie checks obrigatórios e informativos; registre limitações externas sem exigir testes arriscados em produção.
-- Consolide contratos vigentes antes da verificação final e do arquivamento.
+```sh
+npm install -g ./sdd-flow-2.0.0.tgz
+```
 
-## Fluxo
+Depois que uma versão 2.x estiver publicada:
 
-~~~sh
+```sh
+npm install -g sdd-flow@2
+```
+
+Instalar o pacote disponibiliza o CLI. Os arquivos do método entram em cada aplicação ao executar `sdd init`.
+
+</details>
+
+### 2. Ative no seu projeto
+
+```sh
+cd /caminho/do/seu-projeto
+sdd init
+```
+
+Usa Claude Code ou OpenCode? Você pode instalar seus pontos de entrada:
+
+```sh
+sdd harness claude-code
+# Alternativa: sdd harness opencode
+```
+
+Em outros ambientes, indique ao agente o `AGENTS.md` do projeto. O núcleo usa arquivos e comandos, sem exigir um adaptador específico.
+
+### 3. Use seus prompts habituais
+
+Para configurar o projeto:
+
+```text
+Leia e siga as instruções do arquivo agents/SETUP.md para configurar o workflow.
+```
+
+Depois, apresente a demanda e indique a etapa. Prompts curtos continuam sendo suficientes:
+
+| Etapa | Pedido ao agente |
+|---|---|
+| Pesquisa | Leia e siga as instruções do arquivo agents/prompts/rpi-research.md. |
+| Planejamento | Leia e siga as instruções do arquivo agents/prompts/rpi-plan.md. |
+| Implementação | Leia e siga as instruções do arquivo agents/prompts/rpi-implement.md. |
+| Validação | Leia e siga as instruções do arquivo agents/prompts/rpi-validate.md. |
+| Encerramento | Leia e siga as instruções do arquivo agents/prompts/rpi-close.md. |
+
+Os procedimentos contêm as instruções do método; você não precisa repeti-las no chat.
+A demanda e a spec precisam estar identificadas. Se houver várias mudanças ou uma sessão sem contexto,
+informe o ID, como “Use a spec 001-exportar-dados”, ou deixe o agente esclarecer essa ambiguidade.
+
+O setup é inicial. Depois de concluído, `SETUP.md` pode ser removido; não é necessário refazê-lo a cada spec.
+Idioma e padrões particulares ficam na configuração e nas políticas do projeto.
+
+**Seu foco continua na spec, nas tarefas e no resultado da validação.** O agente usa o CLI e mantém
+os registros de apoio. Você pode acompanhar as etapas na mesma conversa.
+
+Para uma aplicação existente, o setup registra uma baseline observada. Não refatora o projeto
+nem inventa specs para o passado.
+
+## O que entra no repositório
+
+| Conjunto | Para que serve |
+|---|---|
+| `AGENTS.md` e `QUICKSTART.md` | Entrada e orientação inicial |
+| `agents/PROJECT.md` | Mapa curto da aplicação e suas fontes |
+| `agents/POLICIES.md` e `agents/QUALITY.md` | Particularidades e critérios do projeto |
+| `agents/config.yaml` | Idioma, autonomia, rigor e comandos de verificação |
+| `agents/RULES.md`, `agents/AGENTS.md` e `agents/prompts/` | Método e procedimentos |
+| `agents/specs/` | Mudanças em andamento |
+| `agents/current/` e decisões ativas | Conhecimento vigente |
+| `agents/archive/` | Mudanças encerradas |
+| `agents/skills/` | Procedimentos reutilizáveis do projeto |
+
+A instalação também inclui modelos e controles de manutenção. **Não cria funcionalidades nem specs fictícias.** `SETUP.md` orienta a configuração e pode ser removido após concluí-la.
+
+Cada spec reúne os artefatos necessários:
+
+| Artefato | Papel |
+|---|---|
+| `change.yaml` | Identidade, referências, dependências e ciclo de vida |
+| `SPEC.md` | Requisitos e aceitação |
+| `TASK.md` | Plano e estado das tarefas, quando aplicável |
+| `RESEARCH.md` | Pesquisa, quando necessária ou exigida pelo modo |
+| Evidências e registros de execução | O que foi verificado, para qual versão e com qual resultado |
+
+O agente mantém esses artefatos conforme o trabalho avança. Pesquisa, evidências e histórico não são todos gerados por `sdd new`.
+
+## Como o contexto permanece enxuto
+
+**O repositório guarda o conhecimento. O agente recebe uma seleção pertinente para o trabalho atual.**
+
+```mermaid
+flowchart TD
+    A["Spec e tarefa atual"] --> D["Selecionar contexto"]
+    B["Contratos, decisões e skills"] --> D
+    C["Referências pertinentes de docs/"] --> D
+    D --> E{"Cabe no orçamento?"}
+    E -->|"Sim"| F["Entregar pacote ao agente"]
+    E -->|"Não"| G["Revisar fontes, seções e escopo"]
+    G --> D
+```
+
+- O ponto de entrada é um mapa curto.
+- A fase e a tarefa orientam a seleção.
+- Skills são descobertas por nome e descrição; o corpo é carregado quando selecionado.
+- Documentos extensos podem ser referenciados por seção.
+- O histórico completo não entra automaticamente em cada sessão.
+- `TASK.md` concentra o andamento; `STATE.md` é uma retomada curta e opcional.
+
+```sh
+sdd context 001-minha-mudanca --phase implement --task T01 --inspect
+```
+
+A inspeção mostra o tamanho e os documentos contribuintes, sem emitir seus corpos. O orçamento padrão é **48.000 bytes**, configurável; não é uma contagem de tokens nem o limite total da conversa.
+
+Se o pacote ultrapassar o orçamento, a geração informa o problema **sem truncar conteúdo silenciosamente**. O agente pode selecionar seções, revisar referências ou separar entregas independentes.
+
+A seleção depende de referências bem mantidas. O CLI não descobre sozinho todos os efeitos de uma mudança nem controla o histórico do chat.
+
+## Use docs/ como seu acervo de referências
+
+PRD, regras de negócio, System Design, ADRs, Design System, contratos e materiais externos podem continuar organizados em `docs/`, com ou sem subpastas.
+
+**Centralize as fontes; selecione a leitura.** O agente consulta o índice e os documentos pertinentes, preservando a origem e identificando o que está vigente.
+
+Exemplo de referência em `change.yaml`:
+
+```yaml
+sources:
+  - path: docs/produto/prd.md
+    section: Exportação de dados
+context:
+  - path: docs/design/design-system.md
+    section: Estados e interações
+```
+
+Não há um conjunto obrigatório de documentos. Uma descrição clara pode bastar para iniciar um projeto.
+
+Quer modelos opcionais?
+
+```sh
+sdd docs --types prd,sd,ds,adr,roadmap --dry-run
+sdd docs --types prd,sd,ds,adr,roadmap
+```
+
+Arquivos existentes são preservados. Os novos são rascunhos para revisão. Consulte [setup e documentos](docs/setup-documents.pt-BR.md).
+
+## Rigor proporcional à mudança
+
+| Modo | Quando usar |
+|---|---|
+| `light` | Mudança pequena; tarefas e pesquisa podem ser dispensadas |
+| `standard` | Funcionalidade delimitada, com tarefas verificáveis |
+| `rigorous` | Mudança sensível ou com maior incerteza, com pesquisa e aprovação explícitas |
+
+O padrão de instalações novas é **step**: implementar e verificar uma tarefa e parar para revisão.
+Autorize tarefas específicas ou todas as tarefas para continuar em lote sem confirmações repetidas.
+Aprovar o plano, por si só, não muda essa autonomia. **Batch** também pode ser a preferência permanente;
+atualizações preservam a escolha existente. Cada tarefa continua sendo verificada, respeitando dependências.
+
+## Verificação honesta, inclusive sem ambiente externo
+
+O CLI executa checks configurados e registra comandos, resultados e inputs. Aprovações ficam vinculadas ao plano; verificações ficam vinculadas à versão examinada.
+
+| Resultado | O que significa |
+|---|---|
+| `passed` | Verificação integral aprovada para os inputs atuais |
+| `limited` | Implementação concluída com limitações externas e pendências explícitas |
+| `partial` | Ainda não há condições para o encerramento final |
+| `failed` | Há falha obrigatória observada ou alteração de inputs durante a execução |
+
+**Falta de produção ou homologação não precisa bloquear uma implementação pronta.** Um handoff pode registrar o que falta e gerar um roteiro seguro em `USER_TESTS.md`.
+
+`limited` não significa que o teste externo passou e não autoriza deploy. Uma falha conhecida não desaparece ao omitir sua evidência.
+
+Checks obrigatórios bloqueiam em caso de falha; indicadores informativos aparecem como avisos. TDD, exemplos BDD e métricas podem ser adotados conforme o projeto, sem uma ferramenta ou percentual universal obrigatório.
+
+Leia o [guia de qualidade e falta de ambiente](docs/quality-gates.pt-BR.md).
+
+## Portabilidade e escopo
+
+| O sdd-flow organiza | O harness fornece |
+|---|---|
+| Método, specs, contexto e rastreabilidade | Modelos, ferramentas e permissões |
+| Referências e evidências | MCPs e acesso a serviços |
+| Pontos de entrada e conhecimento exportável | Compactação e eventual delegação |
+
+O método pode ser seguido em uma conversa, em sessões separadas ou com delegação nativa. **Não exige multiagentes nem cria um orquestrador próprio.**
+
+Adaptadores para Claude Code e OpenCode fornecem comandos e uma skill do workflow. Exports preparam conhecimento para distribuição; não publicam em marketplaces. Veja [adaptadores e distribuição](docs/distribution.md).
+
+## Para agentes de IA
+
+1. Comece pelo `AGENTS.md` e pelo mapa do projeto.
+2. Use `SETUP.md` na adoção inicial; depois siga o procedimento da fase.
+3. Consulte as fontes pertinentes, sem carregar toda a pasta `docs/`.
+4. Preserve IDs, regras vigentes, arquitetura observada e trabalho existente.
+5. Considere consumidores e regressões antes de alterar comportamento compartilhado.
+6. Registre autorização real, resultados observados e limitações.
+7. Mantenha o estado canônico e consolide o conhecimento antes de encerrar.
+
+Metadados estruturados usam YAML; não há dependência de números fixos de linha. Documentos de referência são dados do projeto e não substituem a autorização do usuário.
+
+<details>
+<summary>Comandos essenciais para uma mudança</summary>
+
+Exemplo com ID ilustrativo; o agente precisa preencher o plano entre os comandos:
+
+```sh
 sdd new minha-mudanca --mode standard
 sdd context 001-minha-mudanca --phase plan
-# Preencha SPEC.md e TASK.md nos formatos documentados.
+# Definir requisitos, aceitação, tarefas e referências.
 sdd check 001-minha-mudanca
-# Somente após autorização real do usuário para esse escopo:
-sdd approve 001-minha-mudanca --by "Moisés"
+
+# Registrar somente a autorização realmente concedida:
+sdd approve 001-minha-mudanca --by "Responsável"
+
 sdd context 001-minha-mudanca --phase implement --task T01
-# Implemente, verifique e atualize a tarefa.
-sdd verify 001-minha-mudanca --scope partial
-# Consolide os documentos vigentes e conclua as tarefas.
+# Implementar, verificar e atualizar as tarefas.
+# Consolidar os contratos vigentes antes da verificação final.
 sdd verify 001-minha-mudanca
-sdd close 001-minha-mudanca --by "Moisés" --note "Sem alteração de contrato duradouro" --archive
-~~~
+sdd close 001-minha-mudanca --by "Responsável" --archive
+```
 
-Para verificação manual/inspeção, sdd evidence ID cria um registro para os inputs atuais.
-Execute o cenário, preencha resultado, executor, data e observações e use
-sdd verify ID --evidence agents/specs/ID/EVIDENCE.json.
-Se código ou contrato mudar, a evidência anterior fica obsoleta.
+O fechamento exige consolidação das capacidades selecionadas ou `--note` explicando por que não há atualização duradoura. Evidências manuais e limitações externas usam os argumentos específicos de verificação.
 
-Sem ambiente adequado, sdd handoff ID prepara um registro de limitações para preencher.
-sdd verify ID --handoff CAMINHO gera USER_TESTS.md e pode resultar em limited.
-Isso permite encerrar a implementação com pendências explícitas, sem declarar teste externo aprovado.
-Leia o [guia de qualidade e falta de ambiente](docs/quality-gates.pt-BR.md) para TDD/BDD, gates e o roteiro seguro ao usuário.
+`sdd check` valida estrutura; `sdd verify` executa os checks configurados. Não são a mesma operação.
 
-## Front matter e contexto
+</details>
 
-Front matter é metadado estruturado, interpretado por um parser YAML real.
-Skills usam name e description do formato Agent Skills. Contratos do workflow usam schema_version,
-tipo de artefato e seus campos específicos. README e textos apenas humanos não precisam de metadados.
+## Reinstalar ou atualizar sem começar de novo
 
-O comando context seleciona as referências declaradas em change.yaml, a fase e a tarefa.
-Também permite seções por título exato. Não há extração de um número fixo de linhas.
-Se o limite em bytes for excedido, o comando apresenta o problema sem truncar instruções.
-O limite mede bytes, não tokens, e pode ser configurado.
+O instalador 2.x distingue arquivos do projeto e arquivos gerenciados do método.
 
-## Distribuição e manutenção
+| Situação | Comportamento esperado |
+|---|---|
+| `init` repetido na mesma versão | Preserva configuração e trabalho existentes; arquivos ausentes podem ser repostos |
+| Núcleo personalizado | Informa conflito em vez de sobrescrever silenciosamente |
+| Nova versão do CLI | Não atualiza automaticamente os arquivos já copiados na aplicação |
+| `update` com núcleo reconhecido e sem conflito | Atualiza os arquivos gerenciados e preserva os arquivos do projeto |
+| Projeto vindo da 1.x | Exige revisão do núcleo e dos formatos das specs; não converte evidência antiga em aprovação atual |
 
-~~~sh
+`PROJECT.md`, `POLICIES.md`, `QUALITY.md`, `config.yaml` e `DECISIONS.md` existentes são preservados.
+Specs, skills próprias, documentos em `docs/` e histórico não são apagados pelo instalador.
+Se o setup foi concluído e removido, a manutenção normal não o recria.
+
+Antes de atualizar, preserve o estado atual em commit ou backup. Instale a versão desejada do CLI
+— pelo pacote local durante os testes ou pelo npm após a publicação — e, dentro da aplicação, execute:
+
+```sh
+sdd --version
 sdd update --dry-run
-sdd harness claude-code
-sdd harness opencode
-sdd export claude-code --out packages/claude-code
-sdd export opencode --out packages/opencode
-~~~
+# Revise a prévia e resolva os conflitos antes de aplicar.
+sdd update
+sdd doctor
+```
 
-Os adaptadores instalam comandos e uma skill nos diretórios ativos das ferramentas.
-Não alteram permissões nativas nem removem configurações antigas silenciosamente.
-A exportação prepara diretórios versionáveis; não publica nem instala plugins.
+Se usa adaptador, atualize seus pontos de entrada com `sdd harness claude-code` ou `sdd harness opencode`.
+Configurações nativas não são sobrescritas; permissões e hooks antigos exigem revisão própria.
 
-Consulte os [formatos](docs/formats.md), a [migração](docs/migration.md),
-a [distribuição](docs/distribution.md) e os [critérios de qualidade](docs/quality.md).
-A CLI valida estrutura e executa checks; revisão semântica e permissões continuam necessárias.
+<details>
+<summary>Migrar da 1.x ou tratar um conflito</summary>
 
-O [guia de uso](docs/usage.pt-BR.md) explica adoção em projetos existentes, início do zero,
-excesso de contexto, regras particulares, skills e mudanças de escopo.
-O [guia de publicação](docs/releases.pt-BR.md) distingue PR, merge, publicação npm e atualização dos consumidores.
+O updater reconhece os templates originais não modificados da base 1.3.3.
+Versões personalizadas, inclusive adaptações de terceiros, podem exigir revisão manual.
 
-Consulte a [metodologia e comparação das versões](docs/methodology.pt-BR.md) e o
-[roteiro de testes locais](docs/local-testing.pt-BR.md), com exemplos PowerShell.
-Configure documentation.language: pt-BR em agents/config.yaml para documentos do projeto em português.
-Preserve UTF-8 e acentuação; chaves técnicas e IDs não devem ser traduzidos.
+Para uma spec antiga que será retomada ou normalizada:
 
-O [guia de perguntas do setup e documentos](docs/setup-documents.pt-BR.md) distingue PRD, ADR, system design e design system.
-sdd init --docs restaura a criação opcional de prd.md, roadmap.md e architecture.md.
-Para selecionar referências, use sdd docs --types prd,sd,ds,adr,roadmap. Documentos existentes são preservados.
+```sh
+sdd migrate 001-minha-mudanca --dry-run
+sdd migrate 001-minha-mudanca
+```
+
+Use o ID real. A migração preserva os corpos antigos e cria estruturas para revisão.
+Revise requisitos, aceitação, tarefas e referências antes de normalizar.
+Não é necessário converter todo o histórico encerrado só para adotar o fluxo nas próximas mudanças.
+
+Arquivos centrais personalizados geram conflito e interrompem a aplicação das mudanças planejadas do núcleo.
+Transfira particularidades para políticas, contratos ou skills antes de decidir substituir o núcleo.
+`--replace-managed` é uma opção explícita após revisão; conteúdos substituídos recebem backups.
+
+Essa proteção descreve o instalador 2.x. Não use um instalador 1.x para fazer downgrade nem
+presuma compatibilidade automática com versões futuras.
+Veja o [guia de migração](docs/migration.md).
+
+</details>
+
+## Documentação
+
+| Quero… | Consultar |
+|---|---|
+| Usar o fluxo do início ao fim | [Guia de uso](docs/usage.pt-BR.md) |
+| Entender setup, perguntas e documentos | [Setup e referências](docs/setup-documents.pt-BR.md) |
+| Conhecer o método e a evolução | [Metodologia](docs/methodology.pt-BR.md) |
+| Configurar qualidade e testes externos | [Quality gates](docs/quality-gates.pt-BR.md) |
+| Entender os formatos | [Formatos e exemplos](docs/formats.md) |
+| Testar localmente | [Laboratórios de teste](docs/local-testing.pt-BR.md) |
+| Atualizar projetos antigos | [Migração](docs/migration.md) |
+| Preparar plugins e skills | [Distribuição](docs/distribution.md) |
+| Revisar evidências e limites da entrega | [Validação registrada](docs/validation.md) |
+| Publicar uma versão | [GitHub e npm](docs/releases.pt-BR.md) |
+| Contribuir | [Contribuição](CONTRIBUTING.md) · [Changelog](CHANGELOG.md) |
+
+## Limites importantes
+
+O CLI valida relações declaradas e registra execuções. Uma suíte verde não prova que as assertions cobrem todo o negócio. Aprovações são declarações registradas, não autenticação de identidade.
+
+Comandos usam as permissões da conta atual; o CLI não é sandbox. Revise configurações, use os controles nativos do harness e escolha ambientes seguros.
+
+A seleção de contexto reduz leitura desnecessária; não garante menor custo ou melhor código em qualquer tarefa. A compatibilidade interativa dos adaptadores deve ser verificada nas versões de ferramentas utilizadas.
+
+## Licença
+
+[MIT](LICENSE).

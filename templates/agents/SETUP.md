@@ -2,7 +2,7 @@
 
 1. Inspect the actual project and any supplied requirements. Distinguish observed facts, inferred conventions and unknown decisions. Do not invent historical rationale.
 2. Fill PROJECT.md with a short map. Record mandatory project constraints in POLICIES.md; keep detailed procedures in conditional skills.
-3. Configure mode, autonomy and approval in config.yaml. Use exact check commands from project configuration. If no automated runner exists, acceptance may use manual or inspection evidence.
+3. Configure mode, autonomy and approval in config.yaml. Keep the new-project step default unless the user chooses batch; preserve an existing project's chosen autonomy. User authorization for several tasks or all tasks may override step for that request without changing the standing preference. Use exact check commands from project configuration. If no automated runner exists, acceptance may use manual or inspection evidence.
    Choose quality.tdd and project criteria in QUALITY.md. Checks default to required/local; classify genuinely unavailable external checks explicitly. Do not require production access to finish implementation. See prompts/quality.md when needed.
    Set documentation.language to the team's language (for example pt-BR or en); auto follows the user's language until resolved. Use UTF-8 and preserve normal spelling and diacritics in project documents. Keep schema keys, IDs and original quotes unchanged.
 4. Create current capability documents and ADRs only where useful. Use the examples in current/_template.md and decisions/_template.md; select active documents in each change.

@@ -9,21 +9,26 @@ const io = require('../lib/io');
 const project = require('../lib/project');
 const { install, doctor, migrate } = require('../lib/install');
 const { harness, exportBundle } = require('../lib/adapters');
-const { fixture } = require('../test-support/project');
+const { fixture, editConfig } = require('../test-support/project');
 
 test('init preserves existing user instructions/config and repeated installation is idempotent', t => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'sdd-preserve-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   io.write(root, 'AGENTS.md', '# Team instructions\nKeep the integration invariant.\n');
   install(root);
+  assert.equal(project.config(root).autonomy, 'step');
   const first = io.read(root, 'AGENTS.md');
   assert.match(first, /Keep the integration invariant/);
   install(root);
   assert.equal(io.read(root, 'AGENTS.md'), first);
   assert.equal((first.match(/sdd-flow:start/g) || []).length, 1);
   io.write(root, 'agents/PROJECT.md', '# Custom project map');
+  editConfig(root, cfg => { cfg.autonomy = 'batch'; });
+  install(root);
+  assert.equal(project.config(root).autonomy, 'batch');
   install(root, { update: true });
   assert.equal(io.read(root, 'agents/PROJECT.md'), '# Custom project map');
+  assert.equal(project.config(root).autonomy, 'batch');
 });
 
 test('updates preflight conflicts and only replace customized core with explicit backup', t => {

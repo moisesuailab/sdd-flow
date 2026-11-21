@@ -27,7 +27,7 @@ ADR templates are proposed rather than actual active decisions. No fixed referen
 ~~~yaml
 schema_version: 2
 mode: standard
-autonomy: batch
+autonomy: step
 approval: required
 context:
   max_bytes: 48000
@@ -46,6 +46,9 @@ External commands are skipped unless --run-external is explicitly requested and 
 Optional quality.tdd is optional, preferred (default) or required; it guides the method rather than attesting test chronology.
 QUALITY.md is project-owned, preserved by maintenance and read for planning/review.
 Configure generated paths explicitly; do not exclude source or dependency manifests.
+New installations use step as the standing default. Explicit user authorization for named tasks or
+all tasks permits a bounded batch without changing configuration; plan approval alone does not.
+Existing configured autonomy is preserved on update. Task checks and dependencies still apply in batches.
 A timeout kills the spawned process group on POSIX. On Windows the CLI invokes taskkill.exe
 for its spawned process tree, with shell-process termination as fallback. Use a controlled environment
 when stronger process isolation is required.

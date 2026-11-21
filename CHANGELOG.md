@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.1 — 2026-11-20
+
+- Default new projects to step; follow explicit multi-task/all-task authorization as a bounded batch without resetting existing project preferences.
+- Redesign README and update usage, migration, format and validation documentation accordingly.
+
 ## 2.0.0 — 2026-11-20
 
 Breaking: Node.js 22+, schema 2 artifacts, canonical YAML task state and version-bound scope/evidence.

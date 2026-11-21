@@ -61,7 +61,8 @@ If a crashed process leaves agents/.sdd/lock, confirm no SDD mutation is active 
 
 ## Behavioral changes
 
-- Step-by-step execution is optional; batch is the default within authorized scope.
+- New projects default to step; explicit user authorization for several/all tasks permits a bounded batch.
+- Existing configured autonomy is preserved. Update does not reset a project's batch preference to step.
 - Research is optional except in rigorous mode.
 - Task state lives in YAML metadata, with no duplicate PROGRESS table.
 - Approval applies to scope, not to six independently mutable files.

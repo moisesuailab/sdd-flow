@@ -132,7 +132,12 @@ sdd close 001-exportar-dados --by "Moisés" --archive
 ~~~
 
 Se nenhuma capacidade duradoura foi alterada, close exige --note explicando isso.
-Batch executa tarefas autorizadas em sequência; step para após cada tarefa.
+O padrão de instalações novas é step: implementar e verificar uma tarefa e parar para revisão.
+Se o usuário autorizar tarefas específicas ou todas as tarefas do escopo, execute esse lote sem parar
+entre elas nem repetir a confirmação; não é necessário alterar config.yaml para esse pedido.
+Aprovar o plano, por si só, não autoriza executar todas as tarefas no modo step.
+Batch também pode ser uma preferência permanente. Atualizações preservam a configuração existente.
+Em ambos os modos, verifique e atualize cada tarefa e respeite suas dependências.
 Pesquisa é opcional quando a informação já é suficiente, exceto em rigorous.
 Validação parcial fornece feedback cedo e nunca encerra a spec.
 

@@ -19,6 +19,12 @@ podem ocorrer durante a implementação. O encerramento depende de evidência fi
 Fases não obrigam abrir novas conversas. Uma sessão, subagentes nativos ou uma sessão nova são opções
 do ambiente. Depois de compactação ou transferência, recupere o estado pelos arquivos canônicos.
 
+Instalações novas usam step: uma tarefa por vez, seguida de revisão. A autorização do usuário para
+várias tarefas específicas ou todas as tarefas permite continuar nesse lote sem confirmações repetidas
+nem alteração obrigatória da configuração. Aprovação do plano, por si só, não muda a autonomia.
+Batch pode ser a preferência permanente; atualizações preservam a escolha de projetos existentes.
+Cada tarefa continua sendo verificada e as dependências respeitadas, inclusive durante um lote.
+
 Evidência de execução local e validação externa são distintas. Falta de ambiente não precisa bloquear
 uma implementação concluída: um handoff atual registra o que ficou pendente e como testar com segurança.
 O encerramento limited nunca representa teste externo aprovado; falhas observadas continuam registradas.

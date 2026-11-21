@@ -43,8 +43,12 @@ Standard: add cohesive tasks. Research is optional when uncertainty is low.
 Rigorous: add evidence-backed RESEARCH.md and explicit scope authorization.
 Verification and consolidation apply to every mode.
 
-Step autonomy stops after a task for review. Batch autonomy continues through authorized tasks;
-stop for changed requirements, a blocking ambiguity, unauthorized actions or configured limits.
+New installations default to step: stop after one task for review unless the user has authorized
+specific additional tasks or all tasks in the current scope. That authorization permits a bounded
+batch without repeatedly asking or changing the standing configuration. Approval of a plan alone
+does not imply permission to run every task under step. Configured batch continues through authorized tasks.
+Verify and update each task separately even in a batch; respect dependencies. Stop for changed requirements,
+a blocking ambiguity, unauthorized actions or configured limits.
 Partial verification provides feedback and never closes a change.
 Full limited verification can close implementation with pending external checks and a current user handoff.
 It does not claim external success or authorize deployment. Read prompts/quality.md for BDD/TDD and handoff details.

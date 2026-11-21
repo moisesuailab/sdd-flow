@@ -46,6 +46,10 @@ Optional document scaffolding is exercised both from source and the installed ta
 PRD/roadmap/system-design set, selected design-system/ADR drafts, proposed decision metadata,
 Portuguese accents, preservation of existing content, read-only previews and preflight path collisions.
 
+Installation assertions also verify the new step default and preservation of an existing batch choice
+across reinitialization and updates. Multi-task authorization is a procedure followed by the agent;
+the CLI does not inspect a conversation or certify that the agent actually stopped between tasks.
+
 ## Advisory code metrics
 
 Node.js 24 test coverage reported 94.17% lines, 81.16% branches and 94.15% functions in its instrumented

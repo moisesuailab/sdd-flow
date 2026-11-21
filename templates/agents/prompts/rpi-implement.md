@@ -24,7 +24,11 @@ Check the task's verify condition using observable evidence before marking statu
 Keep status only in TASK.md; an optional STATE.md records blockers and the next action without duplicating the task table.
 Do not create an append-only execution diary in always-loaded files.
 
-Follow configured autonomy: step stops after a task; batch continues through authorized tasks.
+Follow configured autonomy as the standing default. New projects default to step: implement and verify
+one task, then stop for review unless the user already authorized specific additional tasks or all tasks
+in this scope. Follow that authorization without stopping between those tasks or asking again; it does
+not require changing config.yaml. Plan approval alone does not override step. Batch may also be the
+project's standing configuration. In every case, verify/update tasks individually and respect dependencies.
 Ask when behavior, scope or permissions materially change. Continue routine implementation choices inside approved scope.
 Use partial verification for early feedback. Consolidate lasting capability contracts before final verification.
 If only external verification lacks access, finish available implementation/local checks and prepare sdd handoff ID.
