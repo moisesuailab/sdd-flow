@@ -4,6 +4,7 @@
 
 - Default new projects to step; follow explicit multi-task/all-task authorization as a bounded batch without resetting existing project preferences.
 - Redesign README and update usage, migration, format and validation documentation accordingly.
+- Add default engineering rules: KISS/Clean Code/YAGNI/DRY/SOLID guidance and no redundant comments or docblocks.
 
 ## 2.0.0 — 2026-11-20
 
