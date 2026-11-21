@@ -1,7 +1,7 @@
 # Implementation validation
 
 Date: 2026-11-21. Source baseline: 5788679b69fea948c4fa89f8f70feff99a388ba5 (published 2.1.0).
-This release is 2.1.0. No marketplace release was published.
+This release is 2.2.0. No marketplace release was published.
 Earlier 2.0 development results are retained where labeled historical; current automated results follow.
 
 ## Observed automated results
