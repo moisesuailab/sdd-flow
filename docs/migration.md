@@ -54,6 +54,12 @@ Update installed wrappers by rerunning the corresponding harness command after a
 
 ## Backups and recovery
 
+The current 2.x core discovers manifest IDs independently of directory names. Existing IDs need no conversion.
+After updating, run sdd reconcile --dry-run and sdd reconcile while historical specs are still present to inventory observed closures.
+Use rename/archive/restore/remove to organize specs; related and historical source references are optional additions.
+Status defaults to active specs; --all includes archives, recoverable removals and retained records.
+See spec-management.pt-BR.md. Missing old content without a recorded closure remains unknown rather than automatically passed.
+
 Backups retain project-relative names under the reported backup directory.
 Compare and restore only the desired files. The CLI never runs Git reset or rewrites repository history.
 Do not delete the registry when archiving changes; it reserves IDs even if directories later move.

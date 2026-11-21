@@ -51,27 +51,28 @@ Use the method for **new projects** or **existing applications**, with any appli
 
 ## Get started in 3 steps
 
-> **This README describes 2.x**, a breaking evolution from 1.x (see [migration](docs/migration.md)). Confirm your CLI with `sdd --version`.
+> **This README describes 2.1.0.** Flexible spec management is new in this delivery. Until publication, use the local package or source checkout. The public npm version was observed as 2.0.1; check `sdd --version`.
 
 ### 1. Install the CLI
 
-With Node.js 22+:
+With Node.js 22+, using this delivery's tarball:
 
 ```sh
-npm install -g sdd-flow
+npm install -g ./sdd-flow-2.1.0.tgz
 sdd --version
 ```
 
 <details>
-<summary>Other options: run without installing, or from source</summary>
+<summary>Other options: npm after publication or source checkout</summary>
 
-Run without a global install:
+After 2.1 has been published:
 
 ```sh
-npx sdd-flow@latest --help
+npm install -g sdd-flow@2.1
+# Or: npx sdd-flow@2.1 --help
 ```
 
-From the **sdd-flow source checkout** (for contributors):
+Inside the **sdd-flow source checkout**:
 
 ```sh
 npm ci
@@ -221,6 +222,34 @@ sdd docs --types prd,sd,ds,adr,roadmap
 
 Existing files are preserved. New files are drafts for review.
 See [setup and reference documents (Português)](docs/setup-documents.pt-BR.md).
+
+## Organize specs without restarting work
+
+Folder names and visual numbers can change while the manifest ID stays stable.
+Archive unfinished specs, restore them or remove obsolete content. Removal is recoverable by default;
+permanent deletion is explicit.
+
+Missing historical references warn. Unknown prerequisites need local review, without restarting
+the consumer or inventing completion.
+
+<details>
+<summary>Rename, archive, restore and discard</summary>
+
+```sh
+sdd rename 015-export --name export-reports --number 3 --by "Reviewer" --reason "Organize" --dry-run
+sdd archive 015-export --by "Reviewer" --reason "Remove from active work"
+sdd restore 015-export --by "Reviewer" --reason "Resume"
+sdd remove 015-export --by "Reviewer" --reason "Obsolete" --dry-run
+sdd reconcile --dry-run
+sdd status --all
+```
+
+Use actual IDs and review previews. Rename preserves ID 015-export even with folder 003-export-reports.
+Reconcile updates observed inventory only; it does not rewrite requirements or manufacture evidence.
+Current contracts remain available independently of historical spec folders.
+See [spec management (Português)](docs/spec-management.pt-BR.md) for application, permanent discard and recovery.
+
+</details>
 
 ## Choose proportional rigor
 

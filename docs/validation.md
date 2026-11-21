@@ -1,23 +1,22 @@
 # Implementation validation
 
-Date: 2026-11-20. Source baseline: d84c62d51d9c566b0f3e8a6279418220e0fc6e8f (1.3.3).
-Results below were observed while preparing 2.0.0 and re-run (88 tests, package check, audit) for 2.0.1.
-2.0.0 and 2.0.1 are published to npm under the `next` dist-tag first; `latest` is promoted manually.
-No marketplace release was published.
+Date: 2026-11-20. Current source baseline: f209b37850634c34379898f83fff039ba267342f (published 2.0.1).
+This delivery prepares 2.1.0. No 2.1.0 npm publication or marketplace release was performed here.
+Earlier 2.0 development results are retained where labeled historical; current automated results follow.
 
 ## Observed automated results
 
 | Environment/check | Result |
 |---|---|
-| Linux, Node.js 24.22.3 | 88 tests passed |
-| Linux, Node.js 22.23.5 | 88 tests passed |
+| Linux, Node.js 24.22.3 | 114 tests passed |
+| Linux, Node.js 22.23.5 | 114 tests passed |
 | Package syntax/template/export contracts | Passed |
 | Real npm tarball installed in a separate temporary consumer | Passed on both tested Node versions |
 | CLI initialization from a path containing spaces | Passed |
 | Dependency audit | 0 reported vulnerabilities for the installed runtime dependency set |
 | Diff whitespace validation | Passed |
 | npm publication dry run (no registry write) | Passed |
-| Exact version/channel and public-registry availability preflight | Passed for 2.0.0 with next |
+| Exact version/channel and public-registry availability preflight | Passed for 2.1.0 with next |
 
 The automated suite exercises actual passing/failing test processes, stale scope/evidence,
 partial verification, manual/inspection closure, preservation/conflict handling,
@@ -52,14 +51,24 @@ Installation assertions also verify the new step default and preservation of an 
 across reinitialization and updates. Multi-task authorization is a procedure followed by the agent;
 the CLI does not inspect a conversation or certify that the agent actually stopped between tasks.
 
+Spec-management regression scenarios cover stable identities after rename/renumber, manual folder moves,
+scope and receipt preservation, archive/restore independent of closure, recoverable and permanent removal,
+retained closure summaries, manual deletion, unfinished/missing prerequisites, optional historical references,
+required-source failures, ambiguous aliases, malformed unrelated manifests and legacy ID-only registries.
+Failure-injection tests exercise move rollback and interrupted permanent deletion. Manual evidence,
+artifacts and external handoff/guide hashes remain usable after cosmetic moves; failures never become passes.
+The installed-tarball smoke test exercises rename/archive/restore/remove, not only source-level APIs.
+
 ## Advisory code metrics
 
-Node.js 24 test coverage reported 94.17% lines, 81.16% branches and 94.15% functions in its instrumented
+Node.js 24 test coverage reported 95.34% lines, 83.67% branches and 95.12% functions in its instrumented
 report (CLI, lib, release-check and test-support). This is not application acceptance coverage;
 child-process instrumentation and the included helper files limit interpretation of the aggregate.
 
 ESLint 10.15.0 cyclomatic complexity analysis, using a diagnostic warning threshold of 20, identified
 maintenance hotspots in validation, revision, context composition and command dispatch.
+The repeated analysis recorded 16 advisory warnings and no lint errors; new catalog/management
+branches also exceed that diagnostic threshold. These are maintenance findings, not a claim of uniformly low complexity.
 These findings remain advisory; no universal threshold is imposed on consumer projects or used
 to claim that all quality metrics passed. Broad mechanical refactoring was outside this functional change.
 
@@ -87,8 +96,8 @@ tarball smoke test from creating its temporary artifact; the test explicitly iso
 ## Limits and pending release checks
 
 - Windows execution is configured in CI but was not run in this Linux workspace.
-- The npm registry still reports 1.3.3 as latest. No authenticated npm publisher was available locally.
-- GitHub integration rejected repository writes with HTTP 403; no remote PR or CI run was created.
+- The npm registry reports 2.0.1 as latest/next. The 2.1.0 preflight is read-only; no authenticated publisher was used here.
+- This delivery read the published GitHub baseline but did not push a branch, open a PR or run remote CI.
 - Trusted publishing must be configured by the package owner before the manual release workflow can publish.
 - Claude Code and OpenCode applications were not installed. Layouts and metadata were tested;
   interactive tool-version compatibility remains a release check.

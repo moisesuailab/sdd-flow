@@ -101,5 +101,8 @@ Marque como pré-lançamento enquanto a versão estiver só em `next`.
 ## Atualizar os projetos consumidores
 
 Instale o CLI desejado e atualize os templates de cada projeto com `sdd update --dry-run`.
+Após revisar e aplicar, execute sdd reconcile --dry-run e sdd reconcile enquanto os históricos ainda existem,
+para registrar localizações e encerramentos observáveis. Atualize os pontos de entrada do harness quando utilizados.
+Consulte spec-management.pt-BR.md para renomeação, arquivamento, descarte e recuperação.
 Atualizar a instalação global não modifica os arquivos já copiados nos aplicativos.
 Leia `usage.pt-BR.md` e `migration.md` antes de migrar o formato 1.x.

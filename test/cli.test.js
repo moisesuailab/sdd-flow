@@ -6,6 +6,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
+const YAML = require('yaml');
 const io = require('../lib/io');
 const md = require('../lib/markdown');
 const { fixture, cli } = require('../test-support/project');
@@ -86,4 +87,13 @@ test('published tarball contains a runnable CLI, maintained parser and native ex
   const created = spawnSync(process.execPath, [installed, 'new', 'smoke', '--mode', 'light', '--json'], { cwd: workspace, encoding: 'utf8' });
   assert.equal(created.status, 0, created.stderr);
   assert.equal(JSON.parse(created.stdout).id, '001-smoke');
+  for (const args of [
+    ['rename', '001-smoke', '--name', 'renamed', '--number', '8'],
+    ['archive', '001-smoke'], ['restore', '001-smoke'],
+    ['remove', '001-smoke'], ['restore', '001-smoke'],
+  ]) {
+    const managed = spawnSync(process.execPath, [installed, ...args, '--by', 'Tester', '--reason', 'Installed package exercise', '--json'], { cwd: workspace, encoding: 'utf8' });
+    assert.equal(managed.status, 0, managed.stdout || managed.stderr);
+  }
+  assert.equal(YAML.parse(fs.readFileSync(path.join(workspace, 'agents/specs/008-renamed/change.yaml'), 'utf8')).id, '001-smoke');
 });

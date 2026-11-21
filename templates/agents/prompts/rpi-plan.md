@@ -69,6 +69,9 @@ Do not infer that cancellation requests deleting code.
 ## Context and authorization
 
 In change.yaml select capabilities, decisions, skills and dependency spec IDs.
+Prefer current capability contracts for reusable behavior; depends_on is only for real execution prerequisites.
+Use optional related for historical spec IDs and historical: true on source/context objects only for nonessential provenance.
+Missing unfinished dependencies warn during planning so the existing spec can be repaired, but must be resolved before execution.
 Use context entries as a project-relative path or {path: ..., section: Exact heading}.
 Keep sources as paths or explicit path/section references to original requirements, which remain discoverable.
 Do not populate every project artifact merely because a template exists.

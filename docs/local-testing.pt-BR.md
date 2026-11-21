@@ -136,6 +136,10 @@ IDs são exemplos; use os do seu laboratório. Não marque tarefas como done ape
 | Indicador informativo | Configure uma análise advisory que falha, mantendo testes funcionais válidos | Aviso registrado, sem declarar falha funcional nem esconder o indicador |
 | Falha externa observada | Execute um teste externo autorizado que falha; depois omita essa execução | A falha nos mesmos inputs permanece; não vira deferred para permitir fechamento |
 | Efeito em consumidor | Altere uma função compartilhada mantendo seu teste isolado verde, mas quebrando um cenário do consumidor | O teste de regressão do consumidor detecta a falha e impede declarar o gate aprovado |
+| Reorganização | Renomeie/renumere uma spec aprovada, mantendo seu conteúdo | ID e escopo preservados; contexto resolve o caminho atual |
+| Descarte | Remova uma spec, restaure-a e examine --all | Área ativa limpa, código intacto e conteúdo recuperável |
+| Exclusão manual | Exclua uma pasta de laboratório com consumidores | Reconcile distingue encerramento retido, histórico e pré-requisito desconhecido |
+| Metadados defeituosos | Invalide o manifesto de uma spec de laboratório | Diagnóstico local; spec saudável sem relação continua operável |
 
 Use outra spec para objetivo novo depois do encerramento.
 Para revisão na mesma spec, altere antes de encerrar ou reabra explicitamente com motivo.

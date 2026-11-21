@@ -27,7 +27,12 @@ const HELP = [
   'sdd close <spec> --by <name> [--note reason] [--archive]',
   'sdd reopen <spec> --by <name> --reason <reason>',
   'sdd cancel <spec> --by <name> --reason <reason>',
-  'sdd status [<spec>] [--json]',
+  'sdd rename <spec> [--name folder-name] [--number N] --by <name> --reason <reason> [--dry-run]',
+  'sdd archive <spec> --by <name> --reason <reason> [--dry-run]',
+  'sdd restore <spec> [--name folder-name] --by <name> --reason <reason> [--dry-run]',
+  'sdd remove <spec> --by <name> --reason <reason> [--permanent] [--dry-run]',
+  'sdd reconcile [--dry-run]',
+  'sdd status [<spec>] [--all] [--json]',
   'sdd doctor [--json]',
   'sdd update [--dry-run] [--replace-managed]',
   'sdd migrate <spec> [--dry-run]',
@@ -49,14 +54,18 @@ const OPTIONS = {
   inspect: { type: 'boolean' },
   handoff: { type: 'string' }, 'run-external': { type: 'boolean' },
   docs: { type: 'boolean' }, types: { type: 'string' },
+  name: { type: 'string' }, number: { type: 'string' }, permanent: { type: 'boolean' }, all: { type: 'boolean' },
 };
 const ALLOWED = {
   init: ['mode', 'harness', 'docs'], docs: ['types', 'dry-run'], new: ['mode'], context: ['phase', 'task', 'max-bytes', 'inspect'],
   skills: [], check: ['phase', 'final'], approve: ['by'], evidence: ['out'], handoff: [], verify: ['scope', 'evidence', 'handoff', 'run-external'],
   close: ['by', 'note', 'archive'], reopen: ['by', 'reason'], cancel: ['by', 'reason'],
-  status: [], doctor: [], update: ['dry-run', 'replace-managed'], migrate: ['dry-run'],
+  status: ['all'], doctor: [], update: ['dry-run', 'replace-managed'], migrate: ['dry-run'],
   harness: ['remove', 'dry-run'], export: ['out'],
   revise: ['by', 'reason', 'dry-run'],
+  rename: ['name', 'number', 'by', 'reason', 'dry-run'],
+  archive: ['by', 'reason', 'dry-run'], restore: ['by', 'reason', 'name', 'dry-run'],
+  remove: ['by', 'reason', 'permanent', 'dry-run'], reconcile: ['dry-run'],
 };
 
 async function main(argv = process.argv.slice(2), root = process.cwd()) {
@@ -68,9 +77,9 @@ async function main(argv = process.argv.slice(2), root = process.cwd()) {
   for (const key of Object.keys(values)) {
     if (key !== 'json' && !ALLOWED[command].includes(key)) throw new Error('--' + key + ' is not supported by ' + command);
   }
-  const maximum = command === 'skills' ? 3 : ['init', 'doctor', 'update', 'docs'].includes(command) ? 1 : 2;
+  const maximum = command === 'skills' ? 3 : ['init', 'doctor', 'update', 'docs', 'reconcile'].includes(command) ? 1 : 2;
   if (positionals.length > maximum) throw new Error('Unexpected positional arguments');
-  const mutating = new Set(['init', 'docs', 'new', 'approve', 'revise', 'evidence', 'handoff', 'verify', 'close', 'reopen', 'cancel', 'update', 'migrate', 'harness', 'export']);
+  const mutating = new Set(['init', 'docs', 'new', 'approve', 'revise', 'evidence', 'handoff', 'verify', 'close', 'reopen', 'cancel', 'update', 'migrate', 'harness', 'export', 'rename', 'archive', 'restore', 'remove', 'reconcile']);
   async function action() {
     switch (command) {
       case 'init': {
@@ -115,6 +124,14 @@ async function main(argv = process.argv.slice(2), root = process.cwd()) {
       case 'handoff': return require('../lib/handoff').template(root, first);
       case 'verify': return lifecycle.verify(root, first, { scope: values.scope, evidence: values.evidence, handoff: values.handoff, runExternal: values['run-external'] });
       case 'close': return lifecycle.close(root, first, { by: values.by, note: values.note, archive: values.archive });
+      case 'rename':
+      case 'archive':
+      case 'restore':
+      case 'remove': return require('../lib/management').manage(root, command, first, {
+        name: values.name, number: values.number, by: values.by, reason: values.reason,
+        permanent: values.permanent, dryRun: values['dry-run'],
+      });
+      case 'reconcile': return require('../lib/management').reconcile(root, { dryRun: values['dry-run'] });
       case 'reopen':
       case 'cancel': {
         if (!values.by?.trim() || !values.reason?.trim()) throw new Error('Provide --by and --reason');
@@ -122,7 +139,7 @@ async function main(argv = process.argv.slice(2), root = process.cwd()) {
         if (spec.legacy) throw new Error('Migrate the spec before changing its lifecycle');
         if (command === 'reopen') {
           if (!['closed', 'cancelled'].includes(spec.change.status)) throw new Error('Only closed/cancelled changes can be reopened');
-          const target = 'agents/specs/' + spec.id;
+          const target = 'agents/specs/' + require('node:path').posix.basename(spec.relative);
           if (spec.relative !== target) {
             if (io.exists(root, target)) throw new Error('Active spec destination exists');
             fs.renameSync(io.resolve(root, spec.relative), io.resolve(root, target));
@@ -144,12 +161,29 @@ async function main(argv = process.argv.slice(2), root = process.cwd()) {
         project.writeChange(root, spec);
         return { id: spec.id, status: spec.change.status };
       }
-      case 'status': return (first ? [project.locate(root, first)] : project.specDirectories(root)).map(item => {
-        const spec = project.loadSpec(root, item.id);
-        return { id: spec.id, path: spec.relative, status: spec.legacy ? 'legacy' : spec.change.status,
-          approval: spec.legacy ? 'legacy' : project.approvalValid(root, spec) ? 'current' : 'missing-or-stale',
-          closure: spec.change?.closure || null };
-      });
+      case 'status': {
+        const options = { includeTrash: values.all || Boolean(first) };
+        const records = require('../lib/catalog').registry(root).records;
+        if (first && records[first] && (!records[first].path || !io.exists(root, records[first].path))) {
+          const existing = project.specDirectories(root).some(spec => spec.id === first);
+          if (!existing) return [{ id: first, ...records[first], retained: true, historical_only: true }];
+        }
+        const items = first ? [project.locate(root, first, options)] : project.specDirectories(root, options).filter(item => values.all || item.location === 'active');
+        const result = items.map(item => {
+          try {
+            const spec = project.loadSpec(root, item.id, options);
+            return { id: spec.id, name: item.name, location: item.location, path: spec.relative, status: spec.legacy ? 'legacy' : spec.change.status,
+              approval: spec.legacy ? 'legacy' : project.approvalValid(root, spec) ? 'current' : 'missing-or-stale',
+              closure: spec.change?.closure || null };
+          } catch (error) {
+            return { id: item.id, name: item.name, path: item.relative, status: 'invalid', error: error.message };
+          }
+        });
+        if (!first && values.all) for (const [id, record] of Object.entries(records)) {
+          if (!result.some(item => item.id === id)) result.push({ id, ...record, retained: true, historical_only: true });
+        }
+        return result;
+      }
       case 'doctor': return installation.doctor(root);
       case 'update': return installation.install(root, { update: true, dryRun: values['dry-run'], replaceManaged: values['replace-managed'] });
       case 'migrate': return installation.migrate(root, first, { dryRun: values['dry-run'] });

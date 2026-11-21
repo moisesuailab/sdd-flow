@@ -56,3 +56,11 @@ It does not claim external success or authorize deployment. Read prompts/quality
 For oversized requests use prompts/intake.md and sdd context ID --inspect.
 For changed approved requirements, revise the contract/plan and run sdd revise ID --dry-run,
 then record the revision, review impacted tasks and obtain authorization for the new scope.
+
+## Spec organization
+
+Manifest ID is stable; folders and visual numbers are mutable. Use rename, archive, restore and remove
+with --dry-run when reorganizing/discarding. Remove is recoverable unless --permanent is explicit.
+Use status for active specs, --all for archive/trash/retained records, and reconcile to inspect missing/moved content.
+Prefer current contracts for reusable knowledge, related for historical spec IDs, and historical: true only for optional
+source/context provenance. Missing unfinished prerequisites need investigation/revision; do not restart the consumer or invent success.

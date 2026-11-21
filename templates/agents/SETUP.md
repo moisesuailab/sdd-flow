@@ -16,6 +16,7 @@ These adapters do not change native runtime permissions or install dependencies.
 
 For an existing project, adopt observed architecture and tests as a baseline. Do not rewrite existing
 features, invent historical specs or refactor the application during setup. Record uncertainties explicitly.
+Run sdd reconcile --dry-run and reconcile when needed to inventory existing spec locations and observed closures before discarding history.
 For a new project, record only choices that were actually authorized; resolve material unknowns before implementation.
 For broad requirements, follow prompts/intake.md and choose an observable first delivery.
 

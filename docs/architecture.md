@@ -10,6 +10,8 @@ Phases are logical responsibilities; sessions, compaction and delegation belong 
 | lib/io.js | Project-relative paths, atomic writes, hashing, bounded scans and mutation locks |
 | lib/markdown.js | YAML parsing, Markdown metadata and heading selection |
 | lib/project.js | Config, identities, skill catalog and input fingerprints |
+| lib/catalog.js | Stable manifest identities, folder/alias resolution and compact retained closure records |
+| lib/management.js | Rename, archive, restore, discard, impact previews and observed-inventory reconciliation |
 | lib/check.js | Structural contracts, coverage references, cycles and approval checks |
 | lib/context.js | Phase/task context composition with provenance and a byte budget |
 | lib/verification.js | Command runs, observed evidence, receipts and closure |
@@ -80,6 +82,11 @@ who can edit both source and evidence. It prevents accidental stale reuse in the
 Update current capability contracts before final verification and record the producing change ID.
 Keep historical proposals, alternatives and execution logs in the change folder.
 Closed changes can move to archive without changing identity.
+Folder names and visual numbers are independent of manifest ID. Management moves preserve normative scope and receipts;
+structural reference paths resolve through live identities/known aliases without rewriting historical bytes.
+Missing historical sources may warn, while required contracts and unresolved execution prerequisites remain actionable.
+Recorded closure summaries can outlive discarded spec content; they are historical facts, not fresh verification.
+Reconcile records observed inventory only. It does not manufacture a missing closure, alter scope or infer business correctness.
 Reopening preserves history and removes the current verification receipt; new verification is required.
 
 ## Decisions

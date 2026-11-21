@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.1.0 — 2026-11-21
+
+- Decouple stable spec identity from directory names and visual numbering; preserve existing schema 2 IDs.
+- Add previewable rename/archive/restore/remove operations, recoverable trash and explicit permanent discard.
+- Retain compact observed closure summaries and resolve moved structured references without rewriting prior evidence.
+- Add optional historical links, localized missing-prerequisite diagnostics and inventory reconciliation; keep required acceptance honest.
+- List active specs by default with status --all for archive/trash/retained metadata; isolate malformed unrelated manifests.
+
 ## 2.0.1 — 2026-11-20
 
 - Default new projects to step; follow explicit multi-task/all-task authorization as a bounded batch without resetting existing project preferences.

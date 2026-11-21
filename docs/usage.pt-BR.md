@@ -269,6 +269,11 @@ As evidências históricas permanecem. Arquivar conserva IDs; não é necessári
 
 ## 7. Arquivos para rastrear o trabalho
 
+Para renomear, renumerar, arquivar, restaurar ou descartar specs, consulte spec-management.pt-BR.md.
+O ID do manifesto é estável e a pasta pode mudar. Status mostra a área ativa; --all inclui registros históricos.
+Related registra proveniência opcional. Depends_on representa pré-requisito real; um histórico ausente não deve forçar refazer a spec.
+Reconcile diagnostica referências ausentes e sincroniza apenas o inventário observado, sem inventar evidência.
+
 | Arquivo/conjunto | O que registra |
 |---|---|
 | change.yaml | Identidade, modo, referências, dependências, aprovação atual e estado da mudança |

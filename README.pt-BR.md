@@ -51,27 +51,28 @@ O framework serve tanto para **projetos novos** quanto para **aplicações em de
 
 ## Comece em 3 passos
 
-> **Versão deste README: 2.x**, uma evolução com quebra de compatibilidade em relação à 1.x (veja a [migração](docs/migration.md)). Confira a versão com `sdd --version`.
+> **Versão deste README: 2.1.0.** A gestão flexível de specs é nova nesta entrega. Enquanto ela não estiver publicada, use o pacote local ou o código-fonte. O npm público foi observado em 2.0.1; confira `sdd --version`.
 
 ### 1. Instale o CLI
 
-Com Node.js 22+:
+Com Node.js 22+, usando o tarball desta entrega:
 
 ```sh
-npm install -g sdd-flow
+npm install -g ./sdd-flow-2.1.0.tgz
 sdd --version
 ```
 
 <details>
-<summary>Outras opções: executar sem instalar ou pelo código-fonte</summary>
+<summary>Outras opções: npm após publicação ou código-fonte</summary>
 
-Executar sem instalação global:
+Após a publicação da 2.1:
 
 ```sh
-npx sdd-flow@latest --help
+npm install -g sdd-flow@2.1
+# Ou: npx sdd-flow@2.1 --help
 ```
 
-Pelo código-fonte do **sdd-flow** (para quem contribui):
+Pelo código-fonte do **sdd-flow**:
 
 ```sh
 npm ci
@@ -217,6 +218,33 @@ sdd docs --types prd,sd,ds,adr,roadmap
 ```
 
 Arquivos existentes são preservados. Os novos são rascunhos para revisão. Consulte [setup e documentos](docs/setup-documents.pt-BR.md).
+
+## Organize specs sem perder o trabalho
+
+Nome da pasta e número visual podem mudar mantendo o ID técnico. Você pode arquivar specs inacabadas,
+restaurar ou remover conteúdo obsoleto. Remoção é recuperável por padrão; exclusão definitiva é explícita.
+
+Referências históricas ausentes geram avisos. Pré-requisitos desconhecidos precisam de análise,
+sem exigir que outra spec seja refeita nem inventar que algo foi concluído.
+
+<details>
+<summary>Renomear, arquivar, restaurar e descartar</summary>
+
+```sh
+sdd rename 015-exportacao --name exportar-relatorios --number 3 --by "Responsável" --reason "Organizar" --dry-run
+sdd archive 015-exportacao --by "Responsável" --reason "Retirar da área ativa"
+sdd restore 015-exportacao --by "Responsável" --reason "Retomar"
+sdd remove 015-exportacao --by "Responsável" --reason "Obsoleta" --dry-run
+sdd reconcile --dry-run
+sdd status --all
+```
+
+Use os IDs reais e revise as prévias. Rename preserva o ID 015-exportacao mesmo com a pasta 003-exportar-relatorios.
+Reconcile atualiza apenas o inventário observado; não altera requisitos nem fabrica evidência.
+Contratos vigentes ficam disponíveis independentemente das pastas históricas.
+Leia [gestão de specs](docs/spec-management.pt-BR.md) para aplicação, descarte permanente e recuperação.
+
+</details>
 
 ## Rigor proporcional à mudança
 

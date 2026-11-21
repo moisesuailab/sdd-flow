@@ -7,6 +7,9 @@ description: Consolidate implementation and close with truthful verification sta
 
 # Consolidate and close
 
+Keep reusable current contracts outside spec folders that may be discarded. Manifest IDs stay stable across
+rename/archive operations. The compact closure record supports historical dependencies; it is not fresh acceptance evidence.
+
 Update the selected active capability contracts to describe implemented behavior and distinguish any unverified external behavior.
 Add this spec ID to each document's changes list. Link code schemas rather than copying all fields.
 Record durable architectural decisions in individual ADRs; mark replaced ADRs superseded.

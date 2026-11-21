@@ -77,6 +77,12 @@ All paths are project-relative. Absolute paths, traversal and symbolic-link trav
 context also accepts {path: docs/domain.md, section: Exact heading}.
 List relevant capabilities/decisions explicitly; they must have kind: capability/decision and status: active.
 Dependencies reference full change IDs. Implementation/verification requires dependencies to be closed.
+The manifest ID remains stable when the folder is renamed or renumbered; lookup accepts its current folder name too.
+Optional related lists historical spec IDs without requiring their content or loading them into context.
+Source/context objects may use historical: true for nonessential provenance; missing historical files warn.
+Missing required sources still fail. Missing unfinished dependencies warn in plan and block execution until reviewed;
+a retained recorded closure can satisfy a discarded historical dependency, with explicit warnings and fresh consumer checks.
+Use management commands and reconcile; see spec-management.pt-BR.md for retention and recovery limits.
 The approval command updates approval and ID history; do not fabricate those fields manually.
 
 Lifecycle statuses: draft, implementing, implemented (limited verification), verified, closed, cancelled.
