@@ -51,28 +51,27 @@ O framework serve tanto para **projetos novos** quanto para **aplicações em de
 
 ## Comece em 3 passos
 
-> **Versão deste README: 2.1.0.** A gestão flexível de specs é nova nesta entrega. Enquanto ela não estiver publicada, use o pacote local ou o código-fonte. O npm público foi observado em 2.0.1; confira `sdd --version`.
+> **Versão deste README: 2.1.** A gestão flexível de specs é nova nesta versão. Confira a versão com `sdd --version`.
 
 ### 1. Instale o CLI
 
-Com Node.js 22+, usando o tarball desta entrega:
+Com Node.js 22+:
 
 ```sh
-npm install -g ./sdd-flow-2.1.0.tgz
+npm install -g sdd-flow
 sdd --version
 ```
 
 <details>
-<summary>Outras opções: npm após publicação ou código-fonte</summary>
+<summary>Outras opções: executar sem instalar ou pelo código-fonte</summary>
 
-Após a publicação da 2.1:
+Executar sem instalação global:
 
 ```sh
-npm install -g sdd-flow@2.1
-# Ou: npx sdd-flow@2.1 --help
+npx sdd-flow@latest --help
 ```
 
-Pelo código-fonte do **sdd-flow**:
+Pelo código-fonte do **sdd-flow** (para quem contribui):
 
 ```sh
 npm ci

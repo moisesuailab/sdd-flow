@@ -1,7 +1,7 @@
 # Implementation validation
 
 Date: 2026-11-20. Current source baseline: f209b37850634c34379898f83fff039ba267342f (published 2.0.1).
-This delivery prepares 2.1.0. No 2.1.0 npm publication or marketplace release was performed here.
+This release is 2.1.0. No marketplace release was published.
 Earlier 2.0 development results are retained where labeled historical; current automated results follow.
 
 ## Observed automated results
@@ -95,9 +95,8 @@ tarball smoke test from creating its temporary artifact; the test explicitly iso
 
 ## Limits and pending release checks
 
-- Windows execution is configured in CI but was not run in this Linux workspace.
-- The npm registry reports 2.0.1 as latest/next. The 2.1.0 preflight is read-only; no authenticated publisher was used here.
-- This delivery read the published GitHub baseline but did not push a branch, open a PR or run remote CI.
+- CI runs ubuntu and windows on Node.js 22 and 24; the 2.1.0 commit passed all four jobs before publication.
+- Releases are published manually from a maintainer terminal (no provenance attestation) or by the OIDC workflow.
 - Trusted publishing must be configured by the package owner before the manual release workflow can publish.
 - Claude Code and OpenCode applications were not installed. Layouts and metadata were tested;
   interactive tool-version compatibility remains a release check.

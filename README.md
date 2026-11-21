@@ -51,28 +51,27 @@ Use the method for **new projects** or **existing applications**, with any appli
 
 ## Get started in 3 steps
 
-> **This README describes 2.1.0.** Flexible spec management is new in this delivery. Until publication, use the local package or source checkout. The public npm version was observed as 2.0.1; check `sdd --version`.
+> **This README describes 2.1.** Flexible spec management is new in this release. Confirm your CLI with `sdd --version`.
 
 ### 1. Install the CLI
 
-With Node.js 22+, using this delivery's tarball:
+With Node.js 22+:
 
 ```sh
-npm install -g ./sdd-flow-2.1.0.tgz
+npm install -g sdd-flow
 sdd --version
 ```
 
 <details>
-<summary>Other options: npm after publication or source checkout</summary>
+<summary>Other options: run without installing, or from source</summary>
 
-After 2.1 has been published:
+Run without a global install:
 
 ```sh
-npm install -g sdd-flow@2.1
-# Or: npx sdd-flow@2.1 --help
+npx sdd-flow@latest --help
 ```
 
-Inside the **sdd-flow source checkout**:
+From the **sdd-flow source checkout** (for contributors):
 
 ```sh
 npm ci
@@ -358,8 +357,8 @@ Existing `PROJECT.md`, `POLICIES.md`, `QUALITY.md`, `config.yaml` and `DECISIONS
 The installer does not delete project specs, custom skills, `docs/` sources or history.
 Normal maintenance does not recreate a completed, removed setup guide.
 
-Preserve your current work in a commit or backup. Install the desired CLI version from the local package
-during testing, or npm after publication. Inside the application:
+Preserve your current work in a commit or backup. Install the desired CLI version from npm
+(or from the source checkout when testing). Inside the application:
 
 ```sh
 sdd --version
