@@ -33,8 +33,8 @@ test('Portuguese project artifacts and selected context preserve accents while m
   assert.equal(created.id, '002-acao-de-exportacao');
   const generated = md.load(root, created.relative + '/SPEC.md');
   assert.match(generated.body, /Ação de exportação/);
-  assert.match(generated.body, /resultado observável/);
-  assert.match(md.load(root, created.relative + '/TASK.md').body, /resultados coesos e verificáveis/);
+  assert.match(generated.body, /## Objetivo/);
+  assert.match(md.load(root, created.relative + '/TASK.md').body, /Plano de execução/);
   editMarkdown(root, spec.relative + '/SPEC.md', (data, document) => {
     data.requirements[0].description = 'Validar autorização, execução e revisão sem omissões.';
     document.body = '# Adição\n\n## Escopo\n\nPreservar informação e rastreabilidade.';

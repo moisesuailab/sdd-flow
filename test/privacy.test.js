@@ -194,6 +194,26 @@ test('updates merge privacy ignore rules without removing team rules and remain 
   assert.equal(io.read(root, 'agents/.gitignore'), updated);
 });
 
+test('ignore merge stays idempotent when the shipped template has CRLF (Windows autocrlf checkout)', t => {
+  const { root } = fixture(t);
+  const read = io.read;
+  io.read = (base, file) => {
+    const text = read(base, file);
+    return file === 'agents/_gitignore' ? text.replace(/\r?\n/g, '\r\n') : text;
+  };
+  t.after(() => { io.read = read; });
+  for (const team of ['# Team\n/custom/\n', '# Team\r\n/custom/\r\n']) {
+    fs.writeFileSync(io.resolve(root, 'agents/.gitignore'), team);
+    install(root, { update: true });
+    const updated = fs.readFileSync(io.resolve(root, 'agents/.gitignore'), 'utf8');
+    assert.match(updated, /\/specs\/\*\/\.sdd\//);
+    assert.equal(updated.split('# sdd-flow: local execution artifacts').length, 2, 'block appended once');
+    assert.equal(/\r\n/.test(updated) && /(^|[^\r])\n/.test(updated), false, 'no mixed line endings');
+    install(root, { update: true });
+    assert.equal(fs.readFileSync(io.resolve(root, 'agents/.gitignore'), 'utf8'), updated);
+  }
+});
+
 test('CLI diagnostics redact known secrets from configuration errors and exposed config fields', t => {
   const { root } = fixture(t);
   const value = 'credentialValueInConfig987';

@@ -97,6 +97,11 @@ For meaningful changes, add a short impact/regression note in SPEC's body: affec
 behavior to preserve, relevant regression checks and any migration/cache/integration considerations.
 Inspect only applicable areas; a small isolated change may need one sentence. Do not create a duplicate impact document.
 
+Before checking and approving the plan, replace template instructions and example content with actual
+requirements, acceptance and tasks. Omit copied marker legends and empty optional sections; keep required
+metadata/structured sections and real unresolved questions. Do not invent content to fill a heading.
+Planning creates the task list; implementation executes and updates it. Do not repeat these procedure
+instructions inside the spec. Do not cosmetically rewrite existing approved scope without reviewing its approval.
 Run sdd check ID and fix structural gaps. Explain the outcome, assumptions and material choices.
 When the user has authorized this scope, record it with sdd approve ID --by NAME.
 Never claim a human authorization that did not occur. Follow the existing conversation's authorization;

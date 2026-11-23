@@ -17,5 +17,8 @@ introduced regressions and unavailable-environment checks. Keep the impact note 
 Use RESEARCH.md created for standard/rigorous specs; create it on demand in light mode. Record actual findings and original sources. If research is unnecessary, state why and set status: not_needed; rigorous requires completed research. Set status: complete after recording findings. A pending template is not research evidence.
 Use front matter with schema_version: 2, artifact: research and id matching the change ID.
 In the body record the goal, relevant evidence, scope, risks and unresolved blocking questions.
+Before finalizing, replace filling instructions/examples with actual findings and source references.
+Omit empty optional headings, preserve real unresolved questions and never invent findings to fill a template.
+Keep procedure instructions in this prompt rather than copying them into RESEARCH.md.
 Do not implement code. If a material question blocks planning, ask it while continuing independent investigation.
 No separate approval of research/progress/empty decisions files is required; authorization applies to the normative scope bundle.

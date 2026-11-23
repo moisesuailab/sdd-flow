@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.1 — 2026-11-23
+
+- Create lean spec/research/task skeletons without filling instructions or marker legends; keep drafting guidance in phase prompts and clean drafts before approval without rewriting existing specs.
+
 ## 3.0.0 — 2026-11-22
 
 - Remove quadratic scanner searches/repeated line-prefix counting; distinguish ordinary requirement prose from assigned credentials and test adversarial inputs in a bounded process.

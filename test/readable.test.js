@@ -117,6 +117,33 @@ test('short task notes support resumption without new files or stale approvals/r
   assert.throws(() => currentReceipt(root, project.loadSpec(root, spec.id)), /stale/);
 });
 
+test('new draft skeletons contain structure without filling instructions and preserve existing specs', t => {
+  const { root, spec } = fixture(t);
+  const previous = ['SPEC.md', 'TASK.md'].map(name => [name, io.read(root, spec.relative + '/' + name)]);
+  for (const language of ['pt-BR', 'en']) {
+    editConfig(root, cfg => { cfg.artifact_format = 'markdown'; cfg.documentation.language = language; });
+    const portuguese = language === 'pt-BR';
+    for (const mode of ['standard', 'rigorous']) {
+      const created = project.createSpec(root, 'Draft ' + language + ' ' + mode, mode);
+      const contract = md.load(root, created.relative + '/SPEC.md');
+      const tasks = md.load(root, created.relative + '/TASK.md');
+      const research = md.load(root, created.relative + '/RESEARCH.md');
+      assert.equal(contract.body.trim(), '# Draft ' + language + ' ' + mode + (portuguese
+        ? '\n\n## Objetivo\n\n## Escopo' : '\n\n## Goal\n\n## Scope'));
+      assert.equal(tasks.body.trim(), portuguese ? '# Plano de execução' : '# Execution plan');
+      assert.deepEqual(tasks.data.tasks, []);
+      assert.equal(tasks.data.id, created.id);
+      assert.equal(research.body.trim(), portuguese
+        ? '# Pesquisa\n\n## Descobertas\n\n## Questões abertas' : '# Research\n\n## Findings\n\n## Open questions');
+      assert.equal(research.data.status, 'pending');
+      const result = check(root, created.id);
+      assert.equal(result.valid, false, 'An empty draft must not pass validation');
+      if (mode === 'rigorous') assert.match(result.errors.join('\n'), /requires completed research/);
+    }
+  }
+  for (const [name, content] of previous) assert.equal(io.read(root, spec.relative + '/' + name), content);
+});
+
 test('legacy STATE is preserved but only loaded when explicitly selected', t => {
   const { root, spec } = fixture(t, { format: 'markdown' });
   const file = spec.relative + '/STATE.md';
