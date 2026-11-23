@@ -6,14 +6,14 @@
    Choose quality.tdd and project criteria in QUALITY.md. Checks default to required/local; classify genuinely unavailable external checks explicitly. Do not require production access to finish implementation. See prompts/quality.md when needed.
    Set documentation.language to the team's language (for example pt-BR or en); auto follows the user's language until resolved. Use UTF-8 and preserve normal spelling and diacritics in project documents. Keep schema keys, IDs and original quotes unchanged.
 4. Create current capability documents and ADRs only where useful. Use the examples in current/_template.md and decisions/_template.md; select active documents in each change.
-5. Create project skills only for recurring procedures. Copy skills/_template/SKILL.md into a folder matching its name, fill name and description, and link longer references. Validate discovery with sdd skills list.
+5. Identify recurring procedures that already exist or that the stack and documented decisions clearly call for. Create a project skill when you can give concrete, useful guidance for future implementations (commands, paths, conventions, checks), even if no code exists yet. Ground each skill in observed facts or documented decisions; do not invent technical decisions, and do not require a minimum number of skills. Copy skills/_template/SKILL.md into a folder matching its name, fill name and description, and link longer references. Validate discovery with sdd skills list.
 6. Run sdd doctor, resolve missing setup and review the resulting project settings.
 7. Remove this setup guide after configuration.
 
 Do not generate feature code during setup. Do not create generic skills or impose layered architecture on every project.
 Keep the working set minimal: reuse the canonical spec documents, resume from TASK.md and avoid duplicate progress/checkpoint
 files. Do not create STATE.md for routine work. Record short temporary blockers/next actions in task Notes when needed.
-Create reference documents and skills only for an actual need or the user's request; preserve existing user documents.
+Create reference documents only for an actual need or the user's request; create skills as described in step 5; preserve existing user documents.
 Use sdd harness claude-code or sdd harness opencode to install native command and skill entry points.
 These adapters do not change native runtime permissions or install dependencies.
 

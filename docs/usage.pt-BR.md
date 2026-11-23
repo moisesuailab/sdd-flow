@@ -69,7 +69,7 @@ Não invente escolhas de tecnologia quando faltar uma decisão material.
 ~~~
 
 O setup preenche o mapa em PROJECT.md, as regras particulares em POLICIES.md e os checks reais em config.yaml.
-Cria skills somente para procedimentos recorrentes que já façam sentido. Pode manter perguntas materiais em aberto.
+Cria skills específicas quando há orientação concreta e útil, apoiada em fatos observados ou decisões documentadas, mesmo sem código existente; não inventa decisões técnicas nem exige uma quantidade mínima. Pode manter perguntas materiais em aberto.
 
 ### Projeto em desenvolvimento
 

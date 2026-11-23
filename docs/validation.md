@@ -8,8 +8,8 @@ These are source-validation results. Publication is a separate maintainer action
 
 | Check | Result |
 |---|---|
-| Windows, Node.js 24.12.0 | 166 tests passed |
-| GitHub Actions, Linux and Windows, Node.js 22 and 24 | 166 tests passed (CI for the 3.0.2 commit) |
+| Windows, Node.js 24.12.0 | 167 tests passed |
+| GitHub Actions, Linux and Windows, Node.js 22 and 24 | 167 tests passed (CI for the 3.0.3 commit) |
 | npm ci from the unchanged lockfile | Passed |
 | Package syntax, templates and native adapter/export contracts | Passed |
 | Real tarball packed and installed in an isolated consumer | Passed on both tested Node versions |

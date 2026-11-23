@@ -18,6 +18,15 @@ test('shipped rules and intake require confirming a new spec before creating it,
   assert.match(intake, /treat creation as scope approval/);
 });
 
+test('setup guide asks for grounded, concrete skills without a minimum count or generic skills', () => {
+  const setup = fs.readFileSync(require('node:path').join(__dirname, '..', 'templates/agents/SETUP.md'), 'utf8');
+  assert.match(setup, /even if no code exists yet/);
+  assert.match(setup, /Ground each skill in observed facts or documented decisions/);
+  assert.match(setup, /do not require a minimum number of skills/);
+  assert.match(setup, /Do not create generic skills/);
+  assert.doesNotMatch(setup, /skills only for an actual need/);
+});
+
 test('documentation language is optional for existing configurations and validates locale tags', t => {
   const { root } = fixture(t);
   editConfig(root, cfg => { delete cfg.documentation; });

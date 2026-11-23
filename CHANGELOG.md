@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.3 — 2026-11-23
+
+- Setup guide: create project skills whenever the stack and documented decisions give concrete, useful guidance (commands, paths, conventions, checks), even before code exists, grounded in observed facts or documented decisions; no invented decisions, no minimum number of skills, and still no generic skills. Guidance only; it reaches new installations, and existing projects only while they still have agents/SETUP.md (the guide is normally removed after setup and `sdd update` does not recreate it).
+
 ## 3.0.2 — 2026-11-23
 
 - Agents now confirm a new spec's name and scope before creating it (unless creation is already authorized, including a bounded set the user requested). Creating a spec never approves its implementation scope. Guidance only: the CLI does not enforce it, and `sdd update` delivers it through the managed RULES.md and intake prompt.
