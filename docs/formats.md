@@ -2,7 +2,7 @@
 
 ## Metadata policy
 
-Use YAML front matter for machine-consumed Markdown, and YAML for configuration/manifests.
+New SPEC/TASK artifacts keep canonical content in readable Markdown lists, with format: markdown and small YAML front matter. Existing YAML-array schema 2 documents remain readable without conversion. Configuration/manifests remain YAML.
 Skills follow Agent Skills: name matches the directory, is lowercase kebab-case (1–64 characters),
 and description explains the procedure and triggers (1–1024 characters).
 Human-only README files do not need front matter.
@@ -27,6 +27,7 @@ ADR templates are proposed rather than actual active decisions. No fixed referen
 ~~~yaml
 schema_version: 2
 mode: standard
+artifact_format: markdown
 autonomy: step
 approval: required
 context:
@@ -38,6 +39,10 @@ checks:
     timeout_ms: 60000
 verification:
   exclude: [coverage, dist]
+privacy:
+  local_mode: warn
+  store_logs: false
+  sensitive_paths: []
 ~~~
 
 Check commands execute through the local shell using the current account.
@@ -55,6 +60,10 @@ for its spawned process tree, with shell-process termination as fallback. Use a 
 when stronger process isolation is required.
 
 ## Change manifest
+
+The CLI sdd context --json response keeps the complete packet in content. entries contains provenance and byte counts,
+without a duplicate content field per document. The JavaScript context() API retains full entries for programmatic use.
+skills contains selected metadata only; skills_catalog points to on-demand discovery. --inspect emits sizes/provenance only.
 
 Created by sdd new NAME:
 
@@ -91,60 +100,94 @@ IDs remain reserved after archival through the durable project registry.
 Store original requirement paths or {path: ..., section: Exact heading} references in sources. Research/plan context loads those sources/sections;
 other phases may consult them on demand.
 
-## Normative specification
+## Normative specification (readable default)
 
-~~~yaml
+~~~markdown
 ---
 schema_version: 2
 artifact: spec
 id: 001-addition
-requirements:
-  - id: REQ01
-    description: Add two finite numbers and reject nonnumeric values.
-acceptance:
-  - id: AC01
-    covers: [REQ01]
-    description: Adding 2 and 3 yields 5; a string input raises TypeError.
-    method: automated
-    checks: [unit]
+format: markdown
+language: en
 ---
+
+# Addition
+
+## Goal
+Add finite numbers without changing unrelated behavior.
+
+## Requirements
+
+- **REQ01** — Add two finite numbers and reject nonnumeric values.
+
+## Acceptance criteria
+
+- **AC01** — Adding 2 and 3 yields 5; a string input raises TypeError.
+  - Covers: REQ01
+  - Method: automated
+  - Checks: unit
 ~~~
 
-Use REQ, BR or EB for requirement IDs, AC or TC for acceptance IDs.
-Every active requirement needs acceptance coverage. Methods: automated, manual or inspection.
-Automated criteria reference configured check names. A single check can cover several criteria;
-the reviewer must inspect whether assertions actually establish the declared behavior.
-Keep details and rationale in the Markdown body; do not duplicate task execution status there.
+Use REQ/BR/EB requirement IDs and AC/TC acceptance IDs. Each active requirement needs acceptance coverage.
+Methods are automated, manual or inspection; external observations add Environment: external.
+Automated criteria reference actual configured checks; inspect assertions, not only command exit codes.
+Portuguese sections are Requisitos / Critérios de aceitação; fields are Cobre, Método, Checks and Ambiente.
+IDs may be bold or plain. Keep descriptions on their record line; long rationale and code examples go in
+prose sections outside the structured lists. Never duplicate canonical records in front matter.
 
-## Canonical tasks
+## Canonical tasks (readable default)
 
-~~~yaml
+~~~markdown
 ---
 schema_version: 2
 artifact: tasks
 id: 001-addition
-tasks:
-  - id: T01
-    title: Implement addition and regression checks.
-    status: pending
-    covers: [REQ01, AC01]
-    depends_on: []
-    verify: The concrete success and rejection scenarios pass with the unit check.
+format: markdown
+language: en
 ---
+
+# Execution plan
+
+## Tasks
+
+- [ ] **T01** — Implement addition and regression checks.
+  - Covers: REQ01, AC01
+  - Depends on: —
+  - Verify: The concrete success and rejection scenarios pass.
 ~~~
 
-Statuses: pending, in_progress, done, cancelled. Dependencies must be acyclic.
-A started/done task requires completed dependencies. Task state changes do not invalidate scope approval;
-changes to title, covers, depends_on, verify or normative body do.
-Execution evidence may use the task evidence field without changing normative scope.
-An external-only verification task may use kind: verification, status: deferred and deferral: {by: Name, reason: Explanation}.
-It must cover external acceptance IDs, not replace unfinished implementation. Actual verification requires updating it to done.
-Deferral execution metadata does not change the approved plan, but does bind the verification fingerprint.
-Light changes may omit TASK.md. Standard/rigorous changes require at least one task.
+| Marker | State | Meaning |
+|---|---|---|
+| [ ] | pending, in_progress or deferred | Unfinished; optional Status note distinguishes progress/external verification |
+| [x] | done | Completed with available verification |
+| [-] | cancelled | Cancelled, with ID retained |
 
-To cancel an item, retain its ID and add status: cancelled and cancellation: {by: Name, reason: Explanation}.
-Reassign or cancel dependent references consistently. No automatic code deletion is inferred.
-IDs previously recorded by scope approval cannot disappear from a later revision.
+Only [ ] and [x] are standard Markdown checkboxes; [-] is a portable text convention.
+Unqualified [ ] means pending. Qualify only open tasks with Status: in progress or Status: pending external verification
+(Portuguese: Situação: em andamento / Situação: verificação externa pendente). Logical tokens in_progress/deferred are also accepted.
+Remove that note when marking [x] or [-]; conflicting combinations are rejected. State remains in the single TASK.md entry,
+without a duplicate PROGRESS table or editable JSON/YAML view. Legacy [/] and [>] remain readable; rendering uses the new form.
+Portuguese fields: Cobre, Depende de, Verificação, Notas, Evidência, Tipo, Cancelado por,
+Motivo do cancelamento, Adiado por and Motivo do adiamento. English equivalents: Covers, Depends on,
+Verify, Notes, Evidence, Kind, Cancelled by, Cancellation reason, Deferred by and Deferral reason.
+Notas/Notes is optional short observational text for a current blocker or next action. It is not a requirement,
+completion signal or verification evidence. Do not duplicate task state or create a parallel checkpoint diary.
+
+Cancellation needs actor/reason. Deferred tasks need Kind: verification (Tipo: verification), actor/reason
+and external acceptance IDs only. Unfinished implementation, documents or recommendations stay pending;
+use partial verification while actual deliverables remain. Dependencies must be acyclic and done before
+in_progress/done consumers. Requirement/acceptance cancellations use Status: cancelled (Situação: cancelled)
+and the corresponding actor/reason fields.
+
+Task status/evidence/notes changes do not invalidate scope approval. Observational task notes are also excluded
+from verification fingerprints; status/evidence retain their existing verification semantics. Title, coverage, dependencies, verify and
+normative prose changes do. The CLI normalizes the Markdown lists into the same internal schema 2 model;
+there is no duplicate authoritative JSON/YAML copy. Existing YAML-array artifacts retain their prior semantics.
+Explicit file references still bind raw source bytes, including a TASK.md deliberately selected as a source/context reference.
+Light may omit tasks. Standard/rigorous require a task plan; new specs include a research entry point.
+
+Unknown extension fields are preserved in a labeled additional-fields mapping during conversion. Review
+such extensions; they are not an excuse to put the entire plan back in structured metadata.
 
 ## Manual and inspection evidence
 
@@ -171,12 +214,12 @@ Execute the scenario before setting a case to passed/failed:
 Allowed results: passed, failed, not_run, blocked. Executed results require actor, timestamp and notes.
 Artifacts are project-relative regular files and are hashed. Do not record secrets.
 Evidence must match the current input digest. Finish source changes and task status updates before generating it.
-Store evidence under the spec folder so filling it does not itself change the application source fingerprint.
+New readable specs store evidence under the ignored .sdd/ folder inside the spec. Use returned paths; legacy specs keep their old paths until explicit conversion. Never put real credentials or personal payloads in evidence.
 If EVIDENCE.json already exists, the default command returns a new revision-specific filename and preserves
 the previous observations. Use that returned path with --evidence. An explicit --out never overwrites a file.
 
 ~~~sh
-sdd verify 001-addition --evidence agents/specs/001-addition/EVIDENCE.json
+sdd verify 001-addition --evidence agents/specs/001-addition/.sdd/EVIDENCE.json
 ~~~
 
 Full success can close a manually tested project. Partial runs never close changes.
@@ -203,7 +246,7 @@ Select the active ADR paths; do not load an entire global append-only decision l
 
 Rigorous mode requires RESEARCH.md with schema_version: 2, artifact: research and the matching id.
 Document source evidence, decisions, risks and resolved questions in its body.
-Research is optional for other modes. It does not replace the authoritative sources.
+New standard/rigorous specs include RESEARCH.md with status: pending. Record actual findings and set status: complete, or explain status: not_needed outside rigorous mode. A pending template is not evidence. Light creates research only when useful. Research does not replace authoritative sources.
 
 ## Project policies, revision and history
 
@@ -212,11 +255,18 @@ Scope approval binds these policies, check commands and verification exclusions 
 It also binds QUALITY.md and quality settings. Advisory checks cannot be the evidence for required acceptance.
 Context budgets are diagnostic settings and do not change scope approval by themselves.
 
-Each approval retains a normative snapshot in history/approval-*.json. Editing a rule or policy
+Each approval retains a normative snapshot in .sdd/history/approval-*.json. Editing a rule or policy
 does not rewrite that prior snapshot. Use sdd revise ID --by NAME --reason TEXT --dry-run to inspect
 affected task states, then record the revision and authorize the new scope.
 Requirement/acceptance links determine local impact; policy, prose or reference changes may reopen all tasks.
 Dependent tasks are reopened transitively. The agent must still review semantic impact and update tests.
 
-Each verification run retains runs/RUN_ID/receipt.json alongside its logs; verification.json is the current view.
+New readable specs retain .sdd/runs/RUN_ID/receipt.json; .sdd/verification.json is the local current view. Output logs are opt-in (privacy.store_logs), heuristically redacted and local-only. Old root-level paths remain supported for unconverted specs.
 These historical records are not loaded automatically into context.
+
+## Privacy and clones
+
+Technical records are local plaintext files ignored by Git, not encrypted attestations. The shared registry
+retains stable IDs and compact closure summaries. Another checkout can use the Markdown and approval digest,
+but must reverify when local receipts are unavailable; missing revision snapshots trigger conservative impact.
+See privacy.pt-BR.md. No regex or ignore rule guarantees detection/removal of all confidential data.

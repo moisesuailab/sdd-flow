@@ -1,5 +1,6 @@
 schema_version: 2
 mode: standard
+artifact_format: markdown
 autonomy: step
 approval: required
 documentation:
@@ -12,3 +13,7 @@ context:
 checks: []
 verification:
   exclude: []
+privacy:
+  local_mode: warn
+  store_logs: false
+  sensitive_paths: []

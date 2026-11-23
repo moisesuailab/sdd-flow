@@ -10,7 +10,8 @@ description: Execute approved cohesive outcomes with bounded context.
 Run sdd check ID --phase implement. Resolve a missing/stale approval against the actual user authorization.
 Select a pending task whose dependencies are done; light changes may execute directly from acceptance.
 Load sdd context ID --phase implement --task T01 when a task exists.
-Use sdd skills list for metadata discovery and load only relevant bodies.
+Selected skills are already in the packet. Use sdd skills list only when another recurring procedure is needed;
+load only applicable bodies. Do not rediscover or reload the entire catalog for every task.
 
 State the intended outcome. Implement the scoped behavior and tests together.
 Inspect existing code and read additional references when needed; record why additional context matters.
@@ -21,8 +22,15 @@ Follow quality.tdd and use small regression/TDD cycles when applicable; preserve
 Read quality.md for strategy details. Do not claim test-first practice solely from final green tests.
 
 Check the task's verify condition using observable evidence before marking status: done.
-Keep status only in TASK.md; an optional STATE.md records blockers and the next action without duplicating the task table.
-Do not create an append-only execution diary in always-loaded files.
+Use [ ] for unfinished work, [x] for done and [-] for cancelled in readable TASK.md (or preserve the existing YAML status).
+When useful, qualify [ ] with Situação: em andamento / Status: in progress; external deferral uses
+Situação: verificação externa pendente / Status: pending external verification and the required actor/reason.
+Remove that open-task note when completing/cancelling the task. Do not generate [/] or [>].
+Resume from SPEC/TASK, dependency states and current validation. Keep a short Notas/Notes field on the relevant task
+only when a blocker or next action is not obvious; replace obsolete notes rather than appending a diary.
+Do not create STATE.md or a separate progress/checkpoint file. Preserve existing files; consult a legacy STATE only if needed.
+Notes do not change requirements, mark a task complete or prove a test result; update the real contract/status/evidence instead.
+Keep evidence notes short with links to local receipts. Do not create an append-only execution diary in always-loaded files. Never put raw logs, credentials or real personal data into task notes.
 
 Follow configured autonomy as the standing default. New projects default to step: implement and verify
 one task, then stop for review unless the user already authorized specific additional tasks or all tasks

@@ -12,51 +12,68 @@ Use the change mode from change.yaml. Resolve only ambiguities that affect behav
 For a multi-feature request, follow intake.md and propose cohesive linked deliveries. An oversized context packet alone
 does not justify splitting a spec; narrow it by task or section first.
 
-## Contract
+## Contract and readable tasks
 
-SPEC.md front matter is the structured contract. Keep rationale and prose detail in its body.
-Preserve IDs when editing. Use local IDs qualified externally by the change ID.
+New specs use format: markdown. Keep front matter small (schema_version, artifact, id, format, language).
+Write requirements, acceptance and tasks in the Markdown body, not in YAML arrays or a second state table.
+Preserve the original format of existing schema 2 files unless conversion was requested.
+The documented structure below is parsed by the CLI; IDs may be bold or plain.
 
-~~~yaml
+SPEC.md example (fill real requirements and configured check names):
+
+~~~markdown
 ---
 schema_version: 2
 artifact: spec
 id: 001-example
-requirements:
-  - id: REQ01
-    description: State an observable requirement, including important failure behavior.
-acceptance:
-  - id: AC01
-    covers: [REQ01]
-    description: State concrete inputs and expected outcomes.
-    method: automated
-    checks: [unit]
+format: markdown
+language: pt-BR
 ---
+
+# Exemplo
+
+## Objetivo
+Descreva a entrega e seus limites.
+
+## Requisitos
+
+- **REQ01** — Descreva um comportamento observável.
+
+## Critérios de aceitação
+
+- **AC01** — Descreva entradas e resultados esperados, incluindo falhas relevantes.
+  - Cobre: REQ01
+  - Método: automated
+  - Checks: unit
 ~~~
 
-Automated checks must name real checks configured in agents/config.yaml.
-Use method: manual or inspection for cases that require observed evidence rather than a command.
-Automated command success is execution evidence; review assertions to establish semantic coverage.
+Use method manual/inspection for observations; external criteria also declare Ambiente: external.
+Checks must exist in agents/config.yaml. Do not invent commands or claim semantic coverage from exit codes.
+Keep code examples and long rationale outside the structured list sections. Do not duplicate requirements there.
 
-## Tasks
+TASK.md uses the same small metadata with artifact: tasks and a list in Tarefas (or Tasks):
 
-Standard and rigorous modes use TASK.md. Light mode may omit it.
-Keep task status only in its front matter. One task is a cohesive verifiable outcome and may change multiple files.
+~~~markdown
+## Tarefas
 
-~~~yaml
----
-schema_version: 2
-artifact: tasks
-id: 001-example
-tasks:
-  - id: T01
-    title: Implement the behavior and its regression checks.
-    status: pending
-    covers: [REQ01, AC01]
-    depends_on: []
-    verify: The acceptance scenario and relevant regression checks pass.
----
+- [ ] **T01** — Implementar o comportamento e seus testes de regressão.
+  - Cobre: REQ01, AC01
+  - Depende de: —
+  - Verificação: O cenário de aceitação e as regressões pertinentes passam.
 ~~~
+
+[ ] not completed; [x] done; [-] cancelled. Only [ ] and [x] are native Markdown checkboxes.
+An unchecked task may include Situação: em andamento (Status: in progress) or
+Situação: verificação externa pendente (Status: pending external verification).
+These short notes qualify open tasks; omit them for ordinary pending tasks and remove them when marking [x] or [-].
+Keep state in this one TASK.md entry, without a duplicate table. Legacy [/] and [>] remain readable but are not generated.
+Cancelled records retain Cancelado por / Motivo do cancelamento. Deferred tasks use Tipo: verification,
+Adiado por / Motivo do adiamento and cover external acceptance only.
+A task is a cohesive verifiable outcome and may change several files. Light mode may omit TASK.md.
+Optional Notas/Notes holds a short current blocker or next action, not requirements or acceptance. Omit empty fields
+and redundant sections; do not create parallel progress, summary or STATE files.
+New standard/rigorous specs include RESEARCH.md: record actual findings and sources or explain why research
+is not needed (not permitted in rigorous). Never invent research merely to fill a template.
 
 Plan tests with implementation; permit TDD and incremental verification.
 Use concrete initial-state/action/outcome examples in acceptance, including relevant failure/boundary cases.
@@ -64,7 +81,7 @@ Follow config quality.tdd; use quality.md when defining strategy or project-spec
 Classify external checks/criteria accurately before approval. Separate implementation from external-only verification tasks.
 Missing environment access calls for a safe user handoff, not mandatory production testing or an impossible completion gate.
 Allow many-to-many relationships among requirements, acceptance, tasks and tests.
-Retain cancelled records with status: cancelled and cancellation containing reason and by.
+Retain cancelled records with [-] and cancellation actor/reason in readable tasks; preserve the existing YAML representation in legacy tasks.
 Do not infer that cancellation requests deleting code.
 
 ## Context and authorization

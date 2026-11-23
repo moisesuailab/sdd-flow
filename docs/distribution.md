@@ -39,8 +39,12 @@ The output directory must not exist. Export paths stay inside the project and ca
 Claude Code exports .claude-plugin/plugin.json and skills/sdd-flow/.
 OpenCode exports .opencode/skills/sdd-flow/ for copying into a project.
 Agent Skills exports skills/sdd-flow/ for clients that support that format.
-All bundles require Node.js 22+ and a separately installed sdd-flow 2.x CLI.
+All bundles require Node.js 22+ and a separately installed sdd-flow 3.x CLI for readable artifacts.
 No model, account, API credential or specific application stack is embedded.
+Local harness installation follows privacy.local_mode; distribution export is a separate, restrictive sharing operation.
+It rejects declared private source files and recognizable credentials before creating the output directory.
+Local native references use a pointer to the authorized original instead of copying declared private or credential-like
+instructions into another directory. This avoids losing their classification during local adapter generation.
 
 For a local Claude Code smoke test, use the official --plugin-dir support with the exported directory
 in an environment where Claude Code is installed. Export does not publish to a marketplace.

@@ -1,109 +1,112 @@
-# Implementation validation
+# Implementation validation — 3.0.0
 
-Date: 2026-11-21. Source baseline: 5788679b69fea948c4fa89f8f70feff99a388ba5 (published 2.1.0).
-This release is 2.2.0. No marketplace release was published.
-Earlier 2.0 development results are retained where labeled historical; current automated results follow.
+Updated: 2026-11-22. GitHub baseline: d2cee6cd8bd10b541bebc1dc1259358077608d4d.
+The registry was observed on 2026-11-21 at 2.2.0 (gitHead 5eba2ab84a92ef3929328ece34336b113343de60).
+These are source-validation results. Publication is a separate maintainer action.
 
-## Observed automated results
+## Current observed results
 
-| Environment/check | Result |
+| Check | Result |
 |---|---|
-| CI: ubuntu and windows, Node.js 24 | 119 tests passed |
-| CI: ubuntu and windows, Node.js 22 | 119 tests passed |
-| Package syntax/template/export contracts | Passed |
-| Real npm tarball installed in a separate temporary consumer | Passed on both tested Node versions |
-| CLI initialization from a path containing spaces | Passed |
-| Dependency audit | 0 reported vulnerabilities for the installed runtime dependency set |
-| Diff whitespace validation | Passed |
-| npm publication dry run (no registry write) | Passed |
-| Exact version/channel and public-registry availability preflight | Passed for 2.2.0 with next |
+| Windows, Node.js 24.12.0 | 163 tests passed |
+| Linux, Node.js 24.22.3 | 163 tests passed |
+| Linux, Node.js 22.23.5 | 163 tests passed |
+| npm ci from the unchanged lockfile | Passed |
+| Package syntax, templates and native adapter/export contracts | Passed |
+| Real tarball packed and installed in an isolated consumer | Passed on both tested Node versions |
+| CLI from a path containing spaces | Passed |
+| npm publication dry run (no registry write) | Passed with tests and package checks in the required hooks |
+| Exact version/channel registry preflight | 3.0.0 / next available at inspection; recheck before publication |
+| Staged workflow-artifact privacy inspection | Passed, no findings in its declared scope |
+| Diff whitespace and documentation file links | Passed |
+| Conversion of an existing in-progress spec archive | Preserved all requirements, acceptance, task IDs/states and historical receipt bytes; repeated conversion was a no-op |
+| Application commands during the archive conversion exercise | None; this was artifact conversion, not application acceptance testing |
 
-The automated suite exercises actual passing/failing test processes, stale scope/evidence,
-partial verification, manual/inspection closure, preservation/conflict handling,
-cancelled history, archival/reopen, timeout behavior, YAML errors, restricted paths,
-native layouts and conservative migration. Assertions check outcomes rather than only file existence.
+## Scanner and context audit
 
-Additional scenarios cover context-size diagnostics without exposing document bodies, explicit source
-sections, local business-rule revisions and dependent-task reopening, project-policy changes,
-preserved approval snapshots and run receipts, release-channel checks and fail-closed registry errors.
-The package includes the Portuguese usage/release guides and project-policy/intake templates.
-Additional language/reinitialization tests cover optional legacy configuration, locale validation,
-UTF-8/Portuguese accents in generated artifacts and context, stable machine IDs, and preservation
-of a configured project without requesting a removed setup guide. Portuguese methodology,
-local testing and GitHub publication instructions are included in the source/package.
+The tracked source contains only templates/agents/_gitignore, not the obsolete .gitignore. The installer now
+ignores a stale .gitignore source left by an overlay update. The installed-tarball test injects that duplicate
+and verifies preservation of team rules plus canonical spec exclusions. Package checks require a clean source layout.
 
-Quality/environment scenarios additionally verify required versus advisory checks, opt-in external
-execution, honest limited closure, deferred verification tasks, safe handoff validation, stale/tampered
-instructions, preservation of known failures, reopening with actual observations and per-run user-guide history.
-Limited implementation completion is explicitly distinct from fully verified acceptance and deployment approval.
+The review's scanner performance issue was reproducible: a 100 KiB a- sequence exceeded a bounded 3-second
+child process on the prior source. Identifier/scheme restart backtracking and repeated line-prefix counting
+were removed. A warm five-run median on Linux/Node 24.22.3 measured approximately 1.8 ms for 100 KiB and
+15.8 ms for 1 MiB. A separate bounded-process regression covers repeated hyphens/underscores/dots/assignments
+and 10,000 findings with correct line numbers. These are observed samples, not a universal timing guarantee.
 
-New adoption/regression scenarios start from a plain user goal without PRD/ADR, preserve existing
-application code/product documents on installation and catch an actual consumer regression while
-the edited function's isolated unit test remains green.
-The installed-package test now uses a fresh temporary npm cache and a local tarball of the installed
-parser, removing its accidental dependency on warmed registry metadata after an environment restart.
+Twelve explicit English/Portuguese requirement-prose cases remain unchanged, including the four review examples.
+Nine representative synthetic credential formats remain detected/redacted; additional tests cover quoted values,
+registry tokens and structured authorization/cookie headers. Strict local approval/context accepts the login prose.
+This finite corpus does not establish zero false positives or universal secret detection.
 
-Optional document scaffolding is exercised both from source and the installed tarball: the legacy
-PRD/roadmap/system-design set, selected design-system/ADR drafts, proposed decision metadata,
-Portuguese accents, preservation of existing content, read-only previews and preflight path collisions.
+A synthetic task packet with 30 requirements and 60 unselected skills fell from 43,277 to 12,007 UTF-8 bytes
+after removing unused skill metadata and keeping discovery on demand. Canonical task-selected documents cannot
+be loaded again as whole-file duplicates; explicit extra sections still work. CLI JSON carries each document
+body only once. This measures packet size, not model token cost or application-result quality.
 
-Installation assertions also verify the new step default and preservation of an existing batch choice
-across reinitialization and updates. Multi-task authorization is a procedure followed by the agent;
-the CLI does not inspect a conversation or certify that the agent actually stopped between tasks.
+Local validation reports are excluded from npm; packaged Markdown links and absence of stale/internal
+files are tested. Product docs use neutral version wording. Real-project 2.2 upgrade validation and interactive
+harness runs are not covered by the automated suite and remain the maintainer's to confirm.
 
-Spec-management regression scenarios cover stable identities after rename/renumber, manual folder moves,
-scope and receipt preservation, archive/restore independent of closure, recoverable and permanent removal,
-retained closure summaries, manual deletion, unfinished/missing prerequisites, optional historical references,
-required-source failures, ambiguous aliases, malformed unrelated manifests and legacy ID-only registries.
-Failure-injection tests exercise move rollback and interrupted permanent deletion. Manual evidence,
-artifacts and external handoff/guide hashes remain usable after cosmetic moves; failures never become passes.
-The installed-tarball smoke test exercises rename/archive/restore/remove, not only source-level APIs.
+## Lifecycle and privacy regression coverage
 
-## Advisory code metrics
+The original schema 2 lifecycle, cancellation, approval, revision, dependency, migration, environment-handoff,
+manual-observation and installed-package tests still run. Test fixtures explicitly exercise the existing YAML
+representation; new tests additionally exercise the readable default and private runtime layout.
 
-Node.js 24 test coverage reported 95.34% lines, 83.67% branches and 95.12% functions in its instrumented
-report (CLI, lib, release-check and test-support). This is not application acceptance coverage;
-child-process instrumentation and the included helper files limit interpretation of the aggregate.
+Readable-format tests cover three visible markers with short open-task notes preserving all five logical states,
+compatibility with earlier [/] and [>] markers, rejection of contradictory completion/status notes,
+truthful limited closure with an unchecked deferred external-verification task, canonical Markdown without duplicate YAML arrays,
+manual status edits that preserve approval, normative edits that invalidate it, task-scoped context, research
+entry points, readable/legacy coexistence, archive/rename with current receipts, additional field preservation,
+ordinary Markdown indentation/case/plain IDs, conservative revisions without local snapshots and rejection
+of conflicting or malformed records.
 
-ESLint 10.15.0 cyclomatic complexity analysis, using a diagnostic warning threshold of 20, identified
-maintenance hotspots in validation, revision, context composition and command dispatch.
-The repeated analysis recorded 16 advisory warnings and no lint errors; new catalog/management
-branches also exceed that diagnostic threshold. These are maintenance findings, not a claim of uniformly low complexity.
-These findings remain advisory; no universal threshold is imposed on consumer projects or used
-to claim that all quality metrics passed. Broad mechanical refactoring was outside this functional change.
+Minimal-resumption tests establish that new specs do not create STATE.md, legacy STATE remains untouched
+and outside default context, and an explicit reference can still select it. Short task Notes survives readable
+round trips and task-scoped context without invalidating scope approval or existing execution receipts.
+Normative edits still invalidate approval/verification; notes cannot complete a pending task, fabricate evidence
+or close partial work. Non-text task notes are rejected. The document-creation policy guides agents to reuse
+canonical files; it does not intercept arbitrary harness file writes.
 
-## Independent workflow exercises
+Migration tests preflight without writing, preserve originals and completed/deferred task states, clear active
+approval, keep old validation historical and demand fresh verification. Failure injection verifies restoration
+of documents, moved records and inventory. Original source artifacts are not included in this repository.
 
-An independent agent followed the generated workflow skill in isolated projects:
+Privacy tests cover nonblocking local warnings without source mutation/value leaks, opt-in strict mode,
+safe placeholders/environment references, credential/runtime references rejected from context, private Git ignores and restrictive local file permissions,
+logs disabled by default, opt-in log redaction across split chunks, separate stdout/stderr filtering, staged-index
+inspection despite a clean working copy, already tracked private artifacts, root credential filenames,
+configured confidential prefixes (including path aliases/trailing slashes), explicit private-context inclusion/omission,
+private-source fingerprint freshness, warning-only local approval/migration/manual evidence, private local-adapter pointers,
+restrictive distribution exports,
+filtered public handoff guides with private originals and independent valid hashes, ignore merging/idempotence and
+CLI diagnostic filtering. Stock preview privacy-policy replacement is backed up; customized policy files are preserved.
+The packed template uses _gitignore so npm ships it; the installer maps it to agents/.gitignore.
+The installed-tarball test checks actual backup and central private-area exclusions,
+and local private writes establish fallback ignore rules before storing sensitive runtime material.
+The Node 22 run exposed stderr warnings interleaving split stdout credentials; streams are now filtered
+separately before they are combined. All credentials used in these tests are synthetic.
 
-1. A standard JavaScript addition module: 11 success/rejection regression tests,
-   one observed manual acceptance case, current capability consolidation, full verification,
-   archival, reopening and rejection of immediate reclosure without a new receipt.
-2. A light manual-only change with no task file or test framework: actual manual evidence,
-   approved-requirement revision, stale authorization/evidence rejection, reauthorization,
-   revised verification and archival.
-3. Existing team instructions, native settings and unrelated commands survived installation.
-   Customized workflow/native files were preserved; explicit replacement created backups.
-   All three exported layouts included their license and referenced resources.
+A representative supplied archive conversion preserved completed/deferred states and source content without
+executing its application, inventing research or claiming its outstanding acceptance passed. It also exposed
+field-order normalization affecting repeated conversion; formatting is deterministic and already-readable
+specs are detected by their declared format/storage rather than requiring byte-identical pretty printing.
 
-The exercises exposed a setup-removal contradiction and evidence-regeneration friction.
-Both were corrected and covered by regression tests.
-Tests also detected inherited node:test context suppressing nested tests and environment warnings
-interfering with JSON error parsing; the runner and machine-output channel were corrected.
-The full publication dry run also exposed inherited npm dry-run configuration preventing the
-tarball smoke test from creating its temporary artifact; the test explicitly isolates that flag.
+## Release and practical limits
 
-## Limits and pending release checks
+- Windows is configured in CI but this 3.0 change was not executed on Windows here.
+- Interactive Claude Code/OpenCode applications were not exercised; their generated layouts and references were checked.
+- Secret detection/redaction is heuristic and can miss encoded/custom credentials, personal data and business secrets.
+- The CLI cannot intercept arbitrary native-tool writes or prevent force-adding ignored artifacts. Review remains required.
+- Ordinary context omits confidential sources and reports omissions; authorized inclusion is explicit. Private context
+  may contain confidential business/personal data despite credential redaction. Git ignores do not restrict model-provider access.
+- Local warnings deliberately permit source preservation and continued work; they do not certify a file as safe to share.
+- Local records/backups are plaintext; ignore rules do not remove previously tracked files or clean shared history.
+- Scope approval records declared authorization, not authenticated identity or cryptographic attestation.
+- Passing command links do not prove semantic test coverage. Manual/inspection outcomes remain recorded observations.
+- No benchmark proves lower model token cost or superiority over another workflow. Readability and deterministic
+  lifecycle/privacy behaviors were checked; model behavior still needs project-level evaluation.
+- Historical 2.x CI/coverage/audit results are not presented as current 3.0 measurements.
 
-- CI runs ubuntu and windows on Node.js 22 and 24; each release commit is published only after all four jobs pass.
-- Releases are published manually from a maintainer terminal (no provenance attestation) or by the OIDC workflow.
-- Trusted publishing must be configured by the package owner before the manual release workflow can publish.
-- Claude Code and OpenCode applications were not installed. Layouts and metadata were tested;
-  interactive tool-version compatibility remains a release check.
-- No comparative model benchmark against other frameworks was performed.
-- Manual evidence and approvals are recorded assertions, not authenticated attestations.
-- Configured commands use the current account permissions. Native permissions and environment
-  isolation remain necessary; the CLI is not a sandbox.
-- Passing a configured command does not prove semantic coverage of every linked acceptance criterion.
-
-Use docs/quality.md to repeat checks and record future release evidence.
+Repeat with npm test and npm run check, then follow releases.pt-BR.md before publishing.

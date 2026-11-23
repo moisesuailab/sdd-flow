@@ -64,7 +64,7 @@ O núcleo ficou mais verificável, mas também exige aprender formatos e comando
 A seleção de contexto depende de referências bem mantidas; o CLI não infere automaticamente todos os
 efeitos de uma mudança. A verificação é conservadora: alterações nos inputs podem exigir nova execução.
 Identidade do revisor, semântica dos testes e segurança do ambiente não são atestadas pelo CLI.
-Há hotspots de complexidade no próprio código, registrados em validation.md; os testes não eliminam
+Os testes não eliminam
 a necessidade de manutenção e avaliação prática nos harnesses.
 
 ## Como o fluxo funciona na prática
@@ -85,9 +85,9 @@ PRD, ADR, system design, design system e modelos opcionais. O método não exige
 |---|---|
 | O que foi solicitado e qual aceitação deve ser atendida? | change.yaml e SPEC.md |
 | Como será feito e em que estado está? | TASK.md |
-| Qual escopo foi autorizado, quando e por quem? | approval e history/approval-*.json |
-| O que mudou no plano aprovado e por quê? | history/revision-*.json |
-| Quais comandos rodaram e que resultado produziram? | runs/ID/receipt.json e logs |
+| Qual escopo foi autorizado, quando e por quem? | approval e .sdd/history/approval-*.json |
+| O que mudou no plano aprovado e por quê? | .sdd/history/revision-*.json |
+| Quais comandos rodaram e que resultado produziram? | .sdd/runs/ID/receipt.json e logs |
 | Que observação manual foi realizada? | Evidência com cenário, executor, instante e fingerprint |
 | Qual resultado pode ser usado agora? | verification.json, válido somente para os inputs atuais |
 | Como o sistema funciona após a entrega? | current/ e decisões ativas |

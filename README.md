@@ -28,6 +28,8 @@ Describe what you need. The agent consults relevant sources, prepares a spec, im
 
 **Your daily focus stays on the spec.** The agent and CLI maintain supporting records. Configuration, skills and general documents are consulted when relevant.
 
+Version 3 uses readable Markdown specs and local technical records. Existing specs retain their format until explicit conversion; see the [migration guide](docs/migration.md).
+
 ## How it works
 
 ```mermaid
@@ -151,12 +153,28 @@ Each change uses only the applicable artifacts:
 | Artifact | Role |
 |---|---|
 | `change.yaml` | Identity, references, dependencies and lifecycle |
-| `SPEC.md` | Requirements and acceptance |
-| `TASK.md` | Plan and canonical task state, when applicable |
-| `RESEARCH.md` | Research when useful or required by the mode |
-| Evidence and run records | What was checked, for which inputs, with which result |
+| `SPEC.md` | Readable Markdown requirements and acceptance |
+| `TASK.md` | Visible checkboxes and canonical task state |
+| `RESEARCH.md` | Standard/rigorous research entry point; record real findings |
+| `.sdd/` inside the spec | Local Git-ignored technical records; full output logging defaults off |
 
-The agent maintains these as work progresses. Research, evidence and history are not all created by `sdd new`.
+Daily review centers on `SPEC.md` and `TASK.md`. Consult `RESEARCH.md` during research/planning and `VALIDATION.md` for results. `change.yaml` keeps identity/references; `USER_TESTS.md` appears for delegated checks. New specs keep technical records in ignored local `.sdd/` storage. Do not create extra progress, summary or checkpoint documents to duplicate these files.
+
+```markdown
+- [x] **T01** — Implement the core and regression checks.
+- [ ] **T02** — Integrate the interface.
+  - Status: in progress
+  - Notes: Blocker: external contract unresolved; next action: confirm the required field.
+- [ ] **T03** — Exercise acceptance.
+- [-] **T04** — Cancelled item, with actor/reason.
+- [ ] **T05** — External verification, with owner/instructions.
+  - Status: pending external verification
+```
+
+`[ ]` is unfinished, `[x]` is done and `[-]` is cancelled. A short Status note qualifies open tasks when needed;
+remove it when completing/cancelling. `[ ]` and `[x]` are native Markdown checkboxes; `[-]` is a text convention.
+Metadata stays small; requirements/tasks have one authoritative representation in the body.
+See [readable specs, reading by need and conversion](docs/readable-specs.pt-BR.md).
 
 ## How context stays focused
 
@@ -178,7 +196,7 @@ flowchart TD
 - Skills are discovered by name and description; selected bodies are loaded.
 - Large references can be selected by heading.
 - Full historical logs are not loaded automatically.
-- `TASK.md` holds task state; `STATE.md` is an optional short resumption note.
+- Resume from `SPEC.md` and `TASK.md`, with short blocker/next-action notes when useful; `STATE.md` is not required.
 
 ```sh
 sdd context 001-my-change --phase implement --task T01 --inspect
@@ -286,6 +304,14 @@ Required failures block passing verification; advisory issues remain warnings.
 Use TDD, BDD examples and metrics as appropriate, without a mandatory tool or universal percentage.
 
 See [quality gates and missing environments (Português)](docs/quality-gates.pt-BR.md).
+
+## Artifact privacy
+
+Full command output is not stored by default. Runtime receipts, snapshots and evidence stay local and Git-ignored. Suspected credentials produce warnings during local work (`privacy.local_mode: warn`), without changing source documents. Opt-in logs and CLI output are heuristically redacted. `strict` is an optional preference for protected local operations.
+
+Before an authorized commit, run `sdd privacy --staged` and review the staged diff. Inspection reads indexed bytes and reports locations without secret values. Ignore rules do not untrack existing files.
+
+Necessary confidential material belongs in `agents/.sdd/private/`, ignored regardless of detection results. Ordinary context omits private documents; `--include-private` selects only declared sources for authorized use. Credential files remain excluded. Configure `privacy.sensitive_paths` and Git ignores for additional private sources. Sharing inspection and exports remain restrictive. See [privacy and versioning](docs/privacy.pt-BR.md).
 
 ## Portability and scope
 
@@ -411,7 +437,6 @@ Read the [migration guide](docs/migration.md).
 | Test locally | [Local testing (Português)](docs/local-testing.pt-BR.md) |
 | Upgrade legacy projects | [Migration](docs/migration.md) |
 | Prepare plugins and skills | [Distribution](docs/distribution.md) |
-| Review observed validation and limits | [Implementation validation](docs/validation.md) |
 | Publish a version | [GitHub and npm (Português)](docs/releases.pt-BR.md) |
 | Contribute | [Contributing](CONTRIBUTING.md) · [Changelog](CHANGELOG.md) |
 

@@ -28,6 +28,8 @@ Você descreve o que precisa. O agente consulta as referências pertinentes, pre
 
 **No dia a dia, seu foco continua na spec.** O agente e o CLI mantêm os registros de apoio. Configuração, skills e documentos gerais são consultados quando pertinentes.
 
+A versão 3 usa specs em Markdown legível e registros técnicos locais. Specs existentes mantêm seu formato até conversão explícita; consulte o [guia de migração](docs/migration.md).
+
 ## Como funciona
 
 ```mermaid
@@ -151,12 +153,28 @@ Cada spec reúne os artefatos necessários:
 | Artefato | Papel |
 |---|---|
 | `change.yaml` | Identidade, referências, dependências e ciclo de vida |
-| `SPEC.md` | Requisitos e aceitação |
-| `TASK.md` | Plano e estado das tarefas, quando aplicável |
-| `RESEARCH.md` | Pesquisa, quando necessária ou exigida pelo modo |
-| Evidências e registros de execução | O que foi verificado, para qual versão e com qual resultado |
+| `SPEC.md` | Requisitos e aceitação em listas Markdown legíveis |
+| `TASK.md` | Checkboxes e único estado das tarefas, quando aplicável |
+| `RESEARCH.md` | Entrada de pesquisa criada em standard/rigorous; registre descobertas reais |
+| `.sdd/` dentro da spec | Registros técnicos locais, ignorados pelo Git; logs desativados por padrão |
 
-O agente mantém esses artefatos conforme o trabalho avança. Pesquisa, evidências e histórico não são todos gerados por `sdd new`.
+O acompanhamento diário fica principalmente em `SPEC.md` e `TASK.md`. Consulte `RESEARCH.md` na pesquisa/planejamento e `VALIDATION.md` para resultados. `change.yaml` mantém identidade e referências; `USER_TESTS.md` só aparece quando há verificações delegadas. Registros técnicos ficam na área local `.sdd/`, consultada quando necessário. Não crie documentos extras de progresso, resumo ou retomada para repetir esses arquivos.
+
+```markdown
+- [x] **T01** — Implementar o núcleo e seus testes.
+- [ ] **T02** — Integrar a interface.
+  - Situação: em andamento
+  - Notas: Bloqueio: contrato externo ainda indefinido; próxima ação: confirmar o campo obrigatório.
+- [ ] **T03** — Executar o cenário de aceitação.
+- [-] **T04** — Item cancelado, com motivo e responsável.
+- [ ] **T05** — Verificação externa, com roteiro e responsável.
+  - Situação: verificação externa pendente
+```
+
+`[ ]` indica não concluída, `[x]` concluída e `[-]` cancelada. Uma linha curta de Situação qualifica tarefas abertas
+quando necessário; remova-a ao concluir/cancelar. `[ ]` e `[x]` são checkboxes Markdown padrão; `[-]` é uma convenção textual.
+Requisitos e tarefas ficam no corpo dos arquivos, com metadados pequenos; não há uma segunda tabela editável.
+Consulte [formato, leitura por necessidade e conversão](docs/readable-specs.pt-BR.md).
 
 ## Como o contexto permanece enxuto
 
@@ -178,7 +196,7 @@ flowchart TD
 - Skills são descobertas por nome e descrição; o corpo é carregado quando selecionado.
 - Documentos extensos podem ser referenciados por seção.
 - O histórico completo não entra automaticamente em cada sessão.
-- `TASK.md` concentra o andamento; `STATE.md` é uma retomada curta e opcional.
+- A retomada usa `SPEC.md` e `TASK.md`, com notas curtas de bloqueio/próxima ação quando úteis; não exige `STATE.md`.
 
 ```sh
 sdd context 001-minha-mudanca --phase implement --task T01 --inspect
@@ -277,6 +295,14 @@ Checks obrigatórios bloqueiam em caso de falha; indicadores informativos aparec
 
 Leia o [guia de qualidade e falta de ambiente](docs/quality-gates.pt-BR.md).
 
+## Privacidade dos artefatos
+
+Logs completos não são gravados por padrão. Registros, snapshots e evidências técnicas ficam locais e ignorados pelo Git. Suspeitas geram avisos no trabalho local (`privacy.local_mode: warn`), sem alterar os documentos originais. Logs opt-in e saída do CLI recebem filtragem heurística. `strict` é uma preferência opcional para operações locais protegidas.
+
+Antes de um commit autorizado, use `sdd privacy --staged` e revise o diff. A inspeção lê o índice do Git e não exibe os valores suspeitos. Arquivos já rastreados continuam rastreados mesmo após entrar no `.gitignore`.
+
+Material confidencial necessário fica em `agents/.sdd/private/`, ignorado mesmo sem achados. Referências privadas são omitidas do contexto comum; `--include-private` inclui somente fontes selecionadas com acesso autorizado. Arquivos de credenciais continuam excluídos. Configure `privacy.sensitive_paths` e exclusões de Git para outras fontes privadas. Exportações e inspeção antes do commit continuam restritivas. Consulte [privacidade e versionamento](docs/privacy.pt-BR.md).
+
 ## Portabilidade e escopo
 
 | O sdd-flow organiza | O harness fornece |
@@ -330,7 +356,7 @@ O fechamento exige consolidação das capacidades selecionadas ou `--note` expli
 
 ## Reinstalar ou atualizar sem começar de novo
 
-O instalador 2.x distingue arquivos do projeto e arquivos gerenciados do método.
+O instalador distingue arquivos do projeto e arquivos gerenciados do método.
 
 | Situação | Comportamento esperado |
 |---|---|
@@ -390,7 +416,7 @@ Veja o [guia de migração](docs/migration.md).
 | Quero… | Consultar |
 |---|---|
 | Usar o fluxo do início ao fim | [Guia de uso](docs/usage.pt-BR.md) |
-| Trabalhar com agentes de IA (comandos, prompts prontos, exemplo) | [Guia para agentes](docs/guia-agentes.pt-BR.md) |
+| Trabalhar com agentes de IA (comandos, prompts prontos, exemplo) | [Guia para agentes no GitHub](https://github.com/moisesuailab/sdd-flow/blob/main/docs/guia-agentes.pt-BR.md) |
 | Entender setup, perguntas e documentos | [Setup e referências](docs/setup-documents.pt-BR.md) |
 | Conhecer o método e a evolução | [Metodologia](docs/methodology.pt-BR.md) |
 | Configurar qualidade e testes externos | [Quality gates](docs/quality-gates.pt-BR.md) |
@@ -398,7 +424,6 @@ Veja o [guia de migração](docs/migration.md).
 | Testar localmente | [Laboratórios de teste](docs/local-testing.pt-BR.md) |
 | Atualizar projetos antigos | [Migração](docs/migration.md) |
 | Preparar plugins e skills | [Distribuição](docs/distribution.md) |
-| Revisar evidências e limites da entrega | [Validação registrada](docs/validation.md) |
 | Publicar uma versão | [GitHub e npm](docs/releases.pt-BR.md) |
 | Contribuir | [Contribuição](CONTRIBUTING.md) · [Changelog](CHANGELOG.md) |
 

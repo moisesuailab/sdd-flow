@@ -42,6 +42,19 @@ test('CLI context budget: warn exits 0, strict exits 1, inspect exits 0, invalid
   assert.equal(cli(root, [...base, '--budget-mode', 'loose']).status, 1);
 });
 
+test('JSON context emits each selected document body once with entry metadata instead of a second copy', t => {
+  const { root, spec } = fixture(t, { format: 'markdown' });
+  const document = md.load(root, spec.relative + '/SPEC.md');
+  document.data.requirements[0].description += ' UNIQUE_REQUIREMENT_731';
+  io.write(root, spec.relative + '/SPEC.md', md.markdown(document.data, document.body));
+  const response = cli(root, ['context', spec.id, '--task', 'T01', '--json']);
+  assert.equal(response.status, 0, response.stderr);
+  const packet = JSON.parse(response.stdout);
+  assert.equal((response.stdout.match(/UNIQUE_REQUIREMENT_731/g) || []).length, 1);
+  assert.ok(packet.entries.every(entry => !Object.hasOwn(entry, 'content') && Number.isInteger(entry.bytes)));
+  assert.match(packet.content, /UNIQUE_REQUIREMENT_731/);
+});
+
 test('mutations are serialized while readers remain available', t => {
   const { root, spec } = fixture(t);
   io.write(root, 'agents/.sdd/lock', '{"pid":123,"started":"test"}');
@@ -82,6 +95,29 @@ test('published tarball contains a runnable CLI, maintained parser and native ex
     assert.ok(manifest.files.some(file => file.path === included), 'Missing distributable: ' + included);
   }
   assert.equal(manifest.files.some(file => file.path.startsWith('test/') || file.path.includes('.hooks/')), false);
+  for (const internal of ['docs/entrega-3.0.pt-BR.md', 'docs/validation.md', 'templates/agents/.gitignore']) {
+    assert.equal(manifest.files.some(file => file.path === internal), false, 'Internal/stale file in tarball: ' + internal);
+  }
+  const packaged = new Set(manifest.files.map(file => file.path));
+  for (const file of manifest.files.filter(file => file.path.endsWith('.md'))) {
+    const lines = fs.readFileSync(path.join(repository, file.path), 'utf8').split('\n');
+    let fence;
+    const prose = lines.filter(line => {
+      const match = line.match(/^\s*(`{3,}|~{3,})/);
+      if (match) {
+        if (!fence) fence = match[1];
+        else if (fence[0] === match[1][0] && match[1].length >= fence.length) fence = null;
+        return false;
+      }
+      return !fence;
+    }).join('\n');
+    for (const match of prose.matchAll(/\]\(([^)]+)\)/g)) {
+      const link = match[1].split('#')[0];
+      if (!link || /^(?:https?:|mailto:)/.test(link)) continue;
+      const target = path.posix.normalize(path.posix.join(path.posix.dirname(file.path), link));
+      assert.ok(packaged.has(target) || [...packaged].some(name => name.startsWith(target + '/')), file.path + ': missing packaged link ' + target);
+    }
+  }
   const consumer = path.join(temporary, 'consumer');
   fs.mkdirSync(consumer);
   fs.writeFileSync(path.join(consumer, 'package.json'), '{"name":"sdd-smoke","version":"1.0.0","private":true}');
@@ -96,6 +132,21 @@ test('published tarball contains a runnable CLI, maintained parser and native ex
   const initialized = spawnSync(process.execPath, [installed, 'init', '--harness', 'claude-code', '--json'], { cwd: workspace, encoding: 'utf8' });
   assert.equal(initialized.status, 0, initialized.stderr);
   assert.ok(fs.existsSync(path.join(workspace, '.claude/skills/sdd-flow/SKILL.md')));
+  assert.ok(fs.existsSync(path.join(workspace, 'agents/.gitignore')));
+  assert.match(fs.readFileSync(path.join(workspace, 'agents/.gitignore'), 'utf8'), /\/\.sdd\/backups\//);
+  const gitInit = spawnSync('git', ['init', '-q'], { cwd: workspace, encoding: 'utf8' });
+  assert.equal(gitInit.status, 0, gitInit.stderr);
+  const ignoredBackup = spawnSync('git', ['check-ignore', 'agents/.sdd/backups/synthetic.txt'], { cwd: workspace, encoding: 'utf8' });
+  assert.equal(ignoredBackup.status, 0, ignoredBackup.stderr);
+  const ignoredPrivate = spawnSync('git', ['check-ignore', 'agents/.sdd/private/harmless.md'], { cwd: workspace, encoding: 'utf8' });
+  assert.equal(ignoredPrivate.status, 0, ignoredPrivate.stderr);
+  fs.writeFileSync(path.join(consumer, 'node_modules/sdd-flow/templates/agents/.gitignore'), '/.sdd/backups/\n');
+  fs.writeFileSync(path.join(workspace, 'agents/.gitignore'), '# Team rules\n/custom/\n');
+  const updated = spawnSync(process.execPath, [installed, 'update', '--json'], { cwd: workspace, encoding: 'utf8' });
+  assert.equal(updated.status, 0, updated.stderr);
+  const merged = fs.readFileSync(path.join(workspace, 'agents/.gitignore'), 'utf8');
+  assert.match(merged, /\/custom\//);
+  assert.match(merged, /\/specs\/\*\/\.sdd\//);
   const references = spawnSync(process.execPath, [installed, 'docs', '--types', 'ds,adr', '--json'], { cwd: workspace, encoding: 'utf8' });
   assert.equal(references.status, 0, references.stderr || references.stdout);
   assert.ok(fs.existsSync(path.join(workspace, 'docs/design-system.md')));

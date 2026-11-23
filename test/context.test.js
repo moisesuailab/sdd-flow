@@ -22,8 +22,31 @@ test('task context selects relevant acceptance and skills without loading histor
   const packet = context(root, spec.id, { task: 'T01' });
   assert.match(packet.content, /SELECTED_BODY/);
   assert.doesNotMatch(packet.content, /UNRELATED_BODY|HISTORY_SHOULD_NOT_LOAD|Unrelated acceptance/);
-  assert.equal(packet.skills.length, 2);
+  assert.deepEqual(packet.skills.map(skill => skill.name), ['arithmetic']);
+  assert.equal(packet.skills_catalog.available, 2);
+  assert.equal(packet.skills_catalog.discover, 'sdd skills list');
+  assert.doesNotMatch(packet.content, /Use for a separate domain/);
   assert.ok(packet.entries.every(entry => entry.reason));
+});
+
+test('unused skill metadata does not inflate a task packet and duplicate whole-spec references do not defeat task selection', t => {
+  const { root, spec } = fixture(t, { format: 'markdown' });
+  editMarkdown(root, spec.relative + '/SPEC.md', data => {
+    data.requirements.push({ id: 'REQ02', description: 'UNRELATED_REQUIREMENT_731' });
+    data.acceptance.push({ id: 'AC02', description: 'Other scenario.', covers: ['REQ02'], method: 'manual' });
+  });
+  const before = context(root, spec.id, { task: 'T01' });
+  for (let i = 0; i < 60; i++) io.write(root, 'agents/skills/domain-' + i + '/SKILL.md', md.markdown({
+    name: 'domain-' + i, description: 'UNSELECTED_DOMAIN_DESCRIPTION_731 ' + 'Domain conventions. '.repeat(20),
+  }, '# Procedure\n\nUnselected body.'));
+  spec.change.context = [spec.relative + '/SPEC.md', './' + spec.relative + '/SPEC.md', spec.relative + '/TASK.md'];
+  project.writeChange(root, spec);
+  const after = context(root, spec.id, { task: 'T01' });
+  assert.equal(after.skills_catalog.available, 60);
+  assert.ok(after.bytes < before.bytes + 256);
+  assert.doesNotMatch(after.content, /UNRELATED_REQUIREMENT_731|UNSELECTED_DOMAIN_DESCRIPTION_731/);
+  assert.equal(after.entries.filter(entry => entry.path.endsWith('/SPEC.md')).length, 1);
+  assert.equal(after.entries.filter(entry => entry.path.endsWith('/TASK.md')).length, 1);
 });
 
 test('heading references ignore fake headings in fenced code and do not cut by line count', t => {

@@ -11,6 +11,9 @@
 7. Remove this setup guide after configuration.
 
 Do not generate feature code during setup. Do not create generic skills or impose layered architecture on every project.
+Keep the working set minimal: reuse the canonical spec documents, resume from TASK.md and avoid duplicate progress/checkpoint
+files. Do not create STATE.md for routine work. Record short temporary blockers/next actions in task Notes when needed.
+Create reference documents and skills only for an actual need or the user's request; preserve existing user documents.
 Use sdd harness claude-code or sdd harness opencode to install native command and skill entry points.
 These adapters do not change native runtime permissions or install dependencies.
 
@@ -37,3 +40,15 @@ Optional sdd docs creates reference drafts; --types prd,sd,ds,adr,roadmap select
 PRD describes product intent, system design the solution structure, ADRs individual decisions and design system the UI contract.
 Preserve existing document names/locations; map authoritative sources in PROJECT.md instead of duplicating them.
 Generate/fill only requested or useful references. Never invent approved decisions or bulk-load docs/ into every task.
+
+## Privacy and readable artifacts
+
+New specs use Markdown body lists and visible task markers. Keep schema metadata small. Existing specs
+are preserved; use sdd migrate ID --readable --dry-run before an explicitly requested conversion.
+Set documentation.language to the team's language. Review PRIVACY.md; record private path prefixes in
+privacy.sensitive_paths and keep credentials in local environment/secret storage, never in commands or artifacts.
+Use agents/.sdd/private/ only for necessary confidential material. Local privacy defaults to warn; strict is opt-in.
+Private source references may be checked/verified without appearing in ordinary context; use --include-private
+when the agent is authorized to read the required sources. Verify extra private prefixes have Git ignores.
+privacy.store_logs defaults to false. Confirm actual Git exclusions and inspect sdd privacy before sharing.
+Do not copy real documents, customer records or production payloads into specs/tests as examples.

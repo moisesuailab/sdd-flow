@@ -1,6 +1,6 @@
 # Testes locais antes de publicar
 
-Este roteiro testa o código-fonte da versão 2.x deste checkout, sem depender do pacote publicado no npm.
+Este roteiro testa o código-fonte da versão 3.0 deste checkout, sem depender do pacote publicado no npm.
 Exemplos: PowerShell no Windows. Requer Git e Node.js 22+; Node 24 pode ser usado para validar.
 Mantenha os laboratórios fora da pasta do framework. Use cópia/branch para aplicações reais.
 
@@ -43,7 +43,7 @@ node $SddCli init
 
 node $SddCli equivale a sdd, mas aponta exatamente para o código baixado.
 Para o agente executar sdd diretamente, instale o tarball conforme a seção 7,
-ou indique a ele o caminho absoluto deste CLI. Evite executar a versão pública 1.3.3 por engano.
+ou indique a ele o caminho absoluto deste CLI. Confira a versão para não executar outro CLI por engano.
 
 Configure agents/config.yaml preservando os demais campos:
 
@@ -90,7 +90,7 @@ Leia agents/SETUP.md e configure este projeto de laboratório.
 Vamos criar uma biblioteca Node.js pequena, sem dependências externas.
 Escreva os documentos do projeto em português brasileiro, em UTF-8, com acentos.
 Registre apenas escolhas conhecidas. Nesta etapa configure o fluxo, sem implementar.
-Use o CLI 2.x que indiquei; não execute a versão pública 1.3.3 por engano.
+Use o CLI 3.0 deste checkout que indiquei; confira a versão antes de executar os comandos.
 ~~~
 
 Depois peça:
@@ -149,10 +149,10 @@ Uma falha provocada nessa matriz é resultado esperado do controle, não defeito
 
 - SPEC.md: requisitos e aceitação correspondem ao pedido e aos casos de borda.
 - TASK.md: tarefas por resultado; uma única fonte do estado.
-- history/approval-*.json: escopos aprovados preservados.
-- history/revision-*.json: motivo e impacto das alterações.
-- runs/ID/receipt.json e logs: comandos e resultados de execuções reais.
-- verification.json: resultado corrente vinculado aos inputs verificados.
+- .sdd/history/approval-*.json: escopos aprovados preservados.
+- .sdd/history/revision-*.json: motivo e impacto das alterações.
+- .sdd/runs/ID/receipt.json: comandos e resultados de execuções reais; logs só existem quando habilitados explicitamente.
+- .sdd/verification.json: resultado corrente vinculado aos inputs verificados.
 - current/: comportamento consolidado sem depender de todas as specs antigas.
 - archive/: preservação de artefatos e IDs.
 
@@ -195,6 +195,7 @@ sdd --version
 
 Confira Get-Command sdd e repita init/context no laboratório.
 Para restaurar uma versão global anterior, instale explicitamente aquela versão.
-Para testar o pacote já publicado, use sdd-flow@next (ou sdd-flow, quando a 2.x for latest).
+Para testar um pacote publicado, confira antes npm view sdd-flow dist-tags --json e selecione a versão exata pretendida.
+Confira se a dist-tag selecionada corresponde à versão que pretende avaliar.
 
 Após os testes, siga releases.pt-BR.md para publicar uma nova versão.

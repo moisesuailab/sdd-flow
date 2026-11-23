@@ -1,8 +1,9 @@
 # Guia de uso do sdd-flow
 
-Este guia descreve a evolução 2.x. Os comandos novos ficam disponíveis ao instalar o pacote 2.x
-(`npm install -g sdd-flow`, ou `sdd-flow@next` enquanto a 2.x não for a tag `latest`) ou este checkout.
-O CLI precisa de Node.js 22+, mas o projeto desenvolvido pode usar outra linguagem ou plataforma.
+Este guia acompanha a versão 3.0: specs novas em Markdown legível e registros técnicos locais.
+O CLI requer Node.js 22+, enquanto
+a aplicação pode usar outra linguagem. Specs 2.x continuam legíveis; não há conversão automática.
+Consulte [formato legível](readable-specs.pt-BR.md) e [privacidade](privacy.pt-BR.md).
 
 O objetivo é metodológico: organização, contexto pertinente e rastreabilidade. O fluxo não cria um orquestrador.
 Leia methodology.pt-BR.md para a comparação com as versões analisadas e local-testing.pt-BR.md para testar.
@@ -280,17 +281,20 @@ Reconcile diagnostica referências ausentes e sincroniza apenas o inventário ob
 |---|---|
 | change.yaml | Identidade, modo, referências, dependências, aprovação atual e estado da mudança |
 | SPEC.md | Requisitos e aceitação; justificativas no corpo |
-| TASK.md | Plano e único estado das tarefas |
-| RESEARCH.md | Pesquisa quando necessária |
-| STATE.md | Ponto de retomada opcional e curto |
-| history/approval-*.json | Cópias dos escopos aprovados e seus responsáveis/data |
-| history/revision-*.json | Motivo e impacto registrado das revisões |
-| history/closure-*.json, history/reopen-*.json, history/cancel-*.json | Eventos correspondentes de ciclo de vida |
-| verification.json | Resultado corrente para os inputs testados |
+| TASK.md | Plano, único estado das tarefas e notas curtas de bloqueio/próxima ação quando úteis |
+| RESEARCH.md | Entrada de pesquisa em standard/rigorous, preenchida com fatos ou justificativa |
+| .sdd/history/approval-*.json | Cópias dos escopos aprovados e seus responsáveis/data |
+| .sdd/history/revision-*.json | Motivo e impacto registrado das revisões |
+| .sdd/history/closure-*.json, .sdd/history/reopen-*.json, .sdd/history/cancel-*.json | Eventos correspondentes de ciclo de vida |
+| .sdd/verification.json | Resultado corrente para os inputs testados |
 | VALIDATION.md | Resumo legível da verificação corrente |
-| runs/ID/receipt.json e logs | Resultado preservado de cada execução |
+| .sdd/runs/ID/receipt.json e logs opt-in | Resultado preservado de cada execução |
 | current/ e decisions/ | Conhecimento vigente consolidado e justificativas |
 | archive/ | Mudanças encerradas |
+
+Retome por SPEC/TASK e resultados atuais. Não crie documentos paralelos de progresso, resumo ou checkpoint
+para o fluxo habitual. STATE.md antigo é preservado, mas não é carregado automaticamente; consulte se houver
+informações únicas necessárias. Notas não alteram escopo, concluem tarefas ou substituem evidências.
 | .sdd/registry.json | Reserva de identidades, inclusive após arquivamento |
 
 Versione os arquivos relevantes no Git e preserve logs/artefatos necessários para reproduzir revisões.
@@ -315,3 +319,21 @@ sdd harness claude-code
 Siga migration.md para specs 1.x. Personalizações de arquivos centrais produzem conflito e são preservadas;
 só use --replace-managed após revisar a prévia e transferir regras do projeto para seus locais apropriados.
 As skills e specs do projeto permanecem sob seu controle.
+
+## Formato e privacidade em 3.0
+
+A configuração padrão é artifact_format: markdown. O frontmatter contém identificação; requisitos,
+aceitação e tarefas ficam nas listas do corpo. Marcadores: [ ] não concluída, [x] concluída e [-] cancelada.
+Tarefas abertas podem ter Situação: em andamento ou Situação: verificação externa pendente; remova essa nota
+ao concluir/cancelar. Os antigos [/] e [>] continuam legíveis. Use rpi-plan.md para os campos exatos. Não crie PROGRESS
+duplicando a lista. RESEARCH.md novo começa pending: complete a pesquisa real ou justifique not_needed
+fora de rigorous. Registros técnicos novos ficam em .sdd/ dentro da spec, ignorados pelo Git.
+Os caminhos antigos continuam funcionando nas specs não convertidas.
+
+Para converter: sdd migrate ID --readable --dry-run, revisar e depois executar sem --dry-run. IDs e estados
+das tarefas permanecem; o escopo ativo precisa de nova autorização e verificação. Não se inventam resultados.
+Antes de um commit autorizado, execute sdd privacy --staged. Logs completos não são gravados por padrão;
+suspeitas em operações locais geram avisos (privacy.local_mode: warn). Material confidencial necessário fica em
+agents/.sdd/private/; somente referências selecionadas e autorizadas entram com sdd context ID --include-private.
+O contexto comum informa omissões; não deduza requisitos ausentes. Credenciais continuam fora desse pacote.
+privacy.sensitive_paths indica fontes privadas. Consulte os guias ligados no início.

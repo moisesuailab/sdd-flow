@@ -8,6 +8,22 @@ Para aprofundar cada assunto, consulte [uso](usage.pt-BR.md), [metodologia](meth
 [gestão de specs](spec-management.pt-BR.md) e [formatos](formats.md). Em caso de divergência, valem o código
 e os arquivos instalados no seu projeto (`agents/`), e não este guia. Confira a versão com `sdd --version`.
 
+## Atualização 3.0: leitura humana e privacidade
+
+A versão 3.0 usa format: markdown: requisitos, aceitação e tarefas ficam no corpo, com metadados pequenos.
+Os exemplos YAML de esquema interno não são mais a forma recomendada para novas specs. Use os exemplos
+atuais de [specs legíveis](readable-specs.pt-BR.md) e [formatos](formats.md).
+Standard/rigorous criam RESEARCH.md pending; registre pesquisa real ou justifique sua dispensa fora de rigorous.
+Marcadores de tarefa: [ ] não concluída, [x] concluída, [-] cancelada. Quando necessário, uma tarefa aberta
+tem Situação: em andamento ou Situação: verificação externa pendente; remova essa linha ao concluir/cancelar.
+[-] é convenção textual; [ ] e [x] são checkboxes Markdown padrão. [/] e [>] antigos continuam legíveis.
+
+Recibos, evidências JSON, snapshots e logs opt-in ficam locais em .sdd/ dentro da spec; os artefatos visíveis
+continuam sendo os documentos de trabalho. As specs antigas não mudam sozinhas. Para uma conversão revisada:
+`sdd migrate ID --readable --dry-run`, depois `sdd migrate ID --readable`; revisar escopo e verificar novamente.
+Antes de versionar, `sdd privacy --staged` e revisão do diff. Veja [privacidade](privacy.pt-BR.md).
+
+
 ## 1. O que o sdd-flow é e o que não é
 
 O sdd-flow é um CLI que instala e mantém, dentro de um projeto, uma estrutura de desenvolvimento orientado por
@@ -100,8 +116,10 @@ projeto/
     └── .sdd/                 estado interno (registry.json, installed.json, lixeira, backups)
 ~~~
 
-Outros arquivos aparecem conforme o modo e a execução: `RESEARCH.md` (obrigatório no modo rigorous), `STATE.md`
-(nota curta opcional para retomar), `verification.json`, `VALIDATION.md`, `history/` e `runs/`.
+Outros arquivos aparecem conforme o modo e a execução: `RESEARCH.md` (obrigatório no modo rigorous),
+`VALIDATION.md` e os registros locais `.sdd/verification.json`, `.sdd/history/` e `.sdd/runs/`.
+Retome pelo SPEC/TASK, com Notas curtas de bloqueio/próxima ação quando úteis. Não crie STATE/PROGRESS/SUMMARY
+para repetir o andamento. STATE.md existente é preservado e consultado somente se necessário ou selecionado explicitamente.
 
 O que cada documento responde:
 
@@ -198,8 +216,9 @@ IDs nos exemplos são ilustrativos; use o ID real retornado pelo CLI. Todos os c
 | `sdd reconcile [--dry-run]` | Reconciliar o inventário de specs movidas ou ausentes |
 | `sdd status [<spec>] [--all]` | Estado das specs ativas; `--all` inclui arquivo, lixeira e metadados retidos |
 | `sdd doctor` | Diagnosticar a instalação |
+| `sdd privacy [--staged]` | Inspecionar artefatos e caminhos sensíveis sem expor seus valores |
 | `sdd update [--dry-run] [--replace-managed]` | Atualizar arquivos gerenciados, preservando os do projeto |
-| `sdd migrate <spec> [--dry-run]` | Migrar uma spec 1.x para o formato 2 |
+| `sdd migrate <spec> [--readable] [--dry-run]` | Revisar migração 1.x ou conversão explícita para Markdown legível |
 | `sdd harness <claude-code\|opencode> [--remove]` | Instalar/remover pontos de entrada nativos |
 | `sdd export <alvo> --out <pasta>` | Exportar conhecimento (claude-code, opencode, agent-skills) |
 

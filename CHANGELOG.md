@@ -1,5 +1,26 @@
 # Changelog
 
+## 3.0.0 — 2026-11-22
+
+- Remove quadratic scanner searches/repeated line-prefix counting; distinguish ordinary requirement prose from assigned credentials and test adversarial inputs in a bounded process.
+- Keep only selected skill metadata in context, deduplicate task-selected documents and avoid duplicate bodies in CLI JSON.
+- Ignore stale .gitignore source templates while preserving canonical ignore merging; exclude local delivery/validation reports from npm documentation.
+- Generate readable Markdown requirements, acceptance and visible task markers with small metadata; retain YAML schema 2 reading.
+- Use only [ ]/[x]/[-] in new task rendering, with short open-task Status notes; preserve five logical states and read earlier [/] / [>] artifacts.
+- Document reading by phase/need so routine review stays centered on the spec instead of all workflow files.
+- Resume from SPEC/TASK with optional short observational Notes; preserve existing STATE files without automatically loading them or creating duplicate checkpoints.
+- Exclude observational task notes from scope/verification fingerprints while retaining requirements, task-state and evidence controls.
+- Create standard/rigorous research entry points without inventing findings; keep light minimal.
+- Keep new runtime receipts/snapshots/evidence in ignored local .sdd/ storage; logs default off.
+- Separate local privacy warnings from restrictive sharing checks; preserve local source content, with strict mode opt-in.
+- Add a central Git-ignored private working area and explicit --include-private context selection without exposing credential/runtime files.
+- Keep distribution exports/private-index inspection restrictive, filter CLI/opt-in logs and preserve private handoff originals with a filtered public guide.
+- Avoid copying private instructions into local native adapters; refresh only the recognized earlier stock privacy policy and preserve team customizations.
+- Ship ignore rules through a packable template name and verify their effect in the installed tarball.
+- Add previewable readable migration with backups, preserved task states and honest reauthorization/reverification.
+- Shorten/localize validation and deduplicate user-test prerequisites while preserving immutable local run guides.
+
+
 ## 2.2.0 — 2026-11-21
 
 - Context budget is advisory by default: `context.budget_mode: warn|strict` and `sdd context --budget-mode`. Existing projects without the field now receive oversized packets with a warning instead of CONTEXT_BUDGET_EXCEEDED; set `strict` to keep the old behavior.

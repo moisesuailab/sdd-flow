@@ -12,6 +12,7 @@ const { exportBundle, harness } = require('../lib/adapters');
 const project = require('../lib/project');
 
 const root = path.join(__dirname, '..');
+assert.equal(io.exists(TEMPLATES, 'agents/.gitignore'), false, 'Remove the obsolete agents/.gitignore source; only agents/_gitignore is distributed.');
 for (const directory of ['bin', 'lib', 'scripts', 'test', 'test-support']) {
   for (const file of io.walk(root, directory).filter(file => file.endsWith('.js'))) {
     const result = spawnSync(process.execPath, ['--check', io.resolve(root, file)], { encoding: 'utf8' });
@@ -20,6 +21,7 @@ for (const directory of ['bin', 'lib', 'scripts', 'test', 'test-support']) {
 }
 for (const file of io.walk(TEMPLATES).filter(file => file.endsWith('.md'))) {
   const source = io.read(TEMPLATES, file);
+  require('../lib/privacy').assertSafe(source);
   if (source.startsWith('---\n')) md.parseMarkdown(source, file);
   assert.doesNotMatch(source, /grep -A 8|One task = one file|spec-driven-workflow/);
 }
@@ -34,7 +36,7 @@ try {
     const metadata = md.load(temporary, exported.path + '/' + skill);
     assert.equal(metadata.data.name, 'sdd-flow');
     assert.equal(typeof metadata.data.description, 'string');
-    for (const reference of ['references/workflow.md', 'references/rules.md', 'references/intake.md']) {
+    for (const reference of ['references/workflow.md', 'references/rules.md', 'references/intake.md', 'references/privacy.md']) {
       assert.ok(io.exists(temporary, exported.path + '/' + path.posix.dirname(skill) + '/' + reference));
     }
   }

@@ -1,0 +1,16 @@
+/.sdd/lock
+/.sdd/backups/
+/.sdd/private/
+/.sdd/trash/
+/specs/*/.sdd/
+/archive/*/.sdd/
+/specs/*/history/
+/archive/*/history/
+/specs/*/runs/
+/archive/*/runs/
+/specs/*/verification.json
+/archive/*/verification.json
+/specs/*/EVIDENCE*.json
+/archive/*/EVIDENCE*.json
+/specs/*/HANDOFF*.json
+/archive/*/HANDOFF*.json

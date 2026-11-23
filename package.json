@@ -1,6 +1,6 @@
 {
   "name": "sdd-flow",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "description": "Portable spec-driven workflow with bounded context and evidence-based verification",
   "bin": {
     "sdd-cli": "bin/cli.js",
@@ -12,6 +12,8 @@
     "templates/",
     "docs/",
     "!docs/guia-agentes.pt-BR.md",
+    "!docs/entrega-3.0.pt-BR.md",
+    "!docs/validation.md",
     "CHANGELOG.md",
     "README.pt-BR.md",
     "CONTRIBUTING.md"

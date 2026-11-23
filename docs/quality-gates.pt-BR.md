@@ -119,7 +119,7 @@ sdd close 001-minha-mudanca --by "Responsável" --note "Implementação revista;
 
 Use o caminho realmente retornado. A verificação gera USER_TESTS.md a partir do handoff validado
 e registra os hashes do JSON e do roteiro. Não há execução automática desses passos.
-Cada execução preserva seu roteiro em runs/ID/USER_TESTS.md; USER_TESTS.md é a cópia da versão mais recente.
+Cada execução preserva seu roteiro em .sdd/runs/ID/USER_TESTS.md; USER_TESTS.md é a cópia da versão mais recente.
 
 | Resultado | Significado | Encerramento da implementação |
 |---|---|---|

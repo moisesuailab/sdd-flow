@@ -4,6 +4,18 @@ Guia do mantenedor para publicar o pacote npm `sdd-flow` a partir deste reposit�
 Cada nome/versão publicado no npm é permanente: nunca reutilize um número, incremente-o.
 Publicar no npm não atualiza o GitHub, e enviar ao GitHub não publica no npm.
 
+## Preparar a versão 3.0.0
+
+package.json e package-lock.json devem registrar a mesma versão. A linha 3.0 muda os defaults de geração
+e armazenamento; confirme que o número escolhido está disponível antes de publicar. Mantenha o changelog
+como Unreleased durante a revisão e registre a data quando preparar a publicação efetiva.
+
+Teste o código-fonte com npm ci, npm test e npm run check. Instale o tarball em uma pasta descartável,
+exercite o fluxo legível e a conversão de uma cópia de spec existente. Inspecione sdd privacy --staged.
+Ao aplicar patches, confira a base indicada, preserve alterações posteriores e revise conflitos.
+Specs existentes não são convertidas pelo update; --readable é uma operação separada e revisada.
+
+
 ## 1. Preparar
 
 ~~~sh
@@ -16,9 +28,9 @@ npm audit
 ~~~
 
 1. Atualize `CHANGELOG.md` com a nova versão e a data.
-2. Altere a versão sem criar tag: `npm version <major|minor|patch> --no-git-tag-version`
-   (atualiza `package.json` e `package-lock.json` juntos).
-3. Faça o commit e envie para `main`. Não inclua credenciais, `node_modules` ou tarballs.
+2. Confira a versão em `package.json` e `package-lock.json`. Esta entrega já usa 3.0.0; não incremente novamente se esse for o número que pretende publicar e estiver disponível.
+   Em outra entrega, altere a versão sem criar tag: `npm version <major|minor|patch> --no-git-tag-version` (atualiza os dois arquivos).
+3. Faça o commit, envie a branch revisada e integre em `main`, por PR ou pelo processo do repositório. Não inclua credenciais, `node_modules` ou tarballs.
 4. Aguarde o CI (Linux e Windows, Node 22 e 24) ficar verde.
 
 Escolha da versão: correção ou ajuste de documentação/default dentro da mesma linha é patch;

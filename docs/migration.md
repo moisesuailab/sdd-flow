@@ -1,3 +1,40 @@
+# Updating and converting existing projects
+
+## 3.0: readable Markdown and local technical records
+
+CLI context JSON carries the document text once in content; entries now holds path/section/reason/byte metadata.
+Consumers of entries[].content should use content or the JavaScript context() API, which retains full entries.
+The packet carries selected skill metadata only; use sdd skills list for additional on-demand discovery.
+
+Update the CLI, run sdd update --dry-run, review/apply sdd update and refresh any installed harness adapter.
+Existing specs stay in their original format and keep working. Existing configuration is preserved; new specs
+use readable Markdown by default unless artifact_format: yaml is explicitly retained.
+
+~~~sh
+sdd migrate 001-your-change --readable --dry-run
+sdd migrate 001-your-change --readable
+~~~
+
+Conversion preserves IDs and task states, backs up originals locally, moves old runtime records to ignored .sdd/
+and creates a pending research entry point if absent. It does not invent past research. Active specs return to draft
+with approval cleared; closed/cancelled lifecycle is preserved. Old evidence remains historical, not current proof.
+Review the converted scope, record actual authorization and verify current inputs again. No application code is changed.
+
+Move operations preflight collisions and restore original documents/inventory on failure; backups remain local.
+Files already tracked by Git are not untracked automatically. Review the staged deletion/move and run sdd privacy.
+See [readable specs](readable-specs.pt-BR.md) and [privacy](privacy.pt-BR.md).
+
+Normal resumption now uses SPEC/TASK and optional short Notas/Notes on the relevant task. Existing STATE.md
+is not deleted or automatically copied into TASK; inspect unique useful information before any manual cleanup.
+It is no longer automatically loaded, but remains available through an explicit context reference or targeted read.
+Do not create replacement progress/summary/checkpoint files. Notes are observational and do not redefine scope or test results.
+
+Local privacy now defaults to warn even if an existing config omits privacy.local_mode. Keep configured strict only
+when the team intends protected local operations to reject suspicious text. Ordinary context omits confidential sources;
+use --include-private for authorized selected documents. Credential/runtime files remain excluded; sharing checks stay strict.
+Update merges the central private-area Git ignore. The exact uncustomized privacy policy from an earlier stock template
+is backed up and refreshed; customized PRIVACY.md remains preserved and must be reviewed for the new distinction.
+
 # Migrating from 1.x
 
 2.x changes the artifact format and requires Node.js 22+. Work in a versioned branch and review the diff.
@@ -83,8 +120,8 @@ If a crashed process leaves agents/.sdd/lock, confirm no SDD mutation is active 
 
 - New projects default to step; explicit user authorization for several/all tasks permits a bounded batch.
 - Existing configured autonomy is preserved. Update does not reset a project's batch preference to step.
-- Research is optional except in rigorous mode.
-- Task state lives in YAML metadata, with no duplicate PROGRESS table.
+- New standard/rigorous specs have a pending RESEARCH.md; standard may document why research is not needed, while rigorous requires completed research. Light keeps research optional.
+- Task state has one source: the TASK.md entry with [ ]/[x]/[-] and optional open-task Situação/Status notes in the readable format, or YAML metadata in retained legacy specs. Earlier [/] and [>] remain readable. There is no duplicate PROGRESS table.
 - Approval applies to scope, not to six independently mutable files.
 - Mandatory project constraints live in POLICIES.md; skills carry conditional procedures.
 - Approved-scope snapshots, revisions and each run receipt remain available outside default context.

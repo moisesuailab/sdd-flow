@@ -82,7 +82,7 @@ test('missing environment can close as implemented with limitations without fabr
   assert.equal(receipt.acceptance_verified, false);
   assert.equal(receipt.criteria[0].result, 'deferred');
   assert.equal(project.loadSpec(root, spec.id).change.status, 'implemented');
-  assert.match(io.read(root, spec.relative + '/USER_TESTS.md'), /No safe test is available now/);
+  assert.match(io.read(root, spec.relative + '/USER_TESTS.md'), /Awaiting prerequisites or defined steps/);
   const result = close(root, spec.id, { by: 'Reviewer', note: 'Local implementation reviewed; environment unavailable.', archive: true });
   assert.equal(result.status, 'closed');
   assert.equal(result.closure.outcome, 'implemented_with_limitations');

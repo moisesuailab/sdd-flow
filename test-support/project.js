@@ -12,13 +12,15 @@ const { install } = require('../lib/install');
 
 const CLI = path.join(__dirname, '..', 'bin', 'cli.js');
 
-function fixture(t, { mode = 'standard', method = 'automated', approval = 'required' } = {}) {
+function fixture(t, { mode = 'standard', method = 'automated', approval = 'required', format = 'yaml' } = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'sdd-test-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   install(root);
   io.write(root, 'agents/PROJECT.md', md.markdown({ schema_version: 2, kind: 'project', description: 'Fixture' }, '# Fixture\n\nA Node.js arithmetic module.'));
   const cfg = project.config(root);
   cfg.approval = approval;
+  cfg.artifact_format = format;
+  cfg.privacy = { store_logs: true };
   if (method === 'automated') cfg.checks = [{ name: 'unit', command: 'node --test arithmetic.test.js', timeout_ms: 10000 }];
   io.write(root, 'agents/config.yaml', YAML.stringify(cfg));
   io.write(root, 'arithmetic.js', "exports.add = (a, b) => a + b;\n");
@@ -26,11 +28,12 @@ function fixture(t, { mode = 'standard', method = 'automated', approval = 'requi
   const spec = project.createSpec(root, 'addition', mode);
   const acceptance = { id: 'AC01', description: 'Adding 2 and 3 produces 5.', covers: ['REQ01'], method };
   if (method === 'automated') acceptance.checks = ['unit'];
-  io.write(root, spec.relative + '/SPEC.md', md.markdown({ schema_version: 2, artifact: 'spec', id: spec.id,
+  const layout = format === 'markdown' ? { format: 'markdown', language: 'en' } : {};
+  io.write(root, spec.relative + '/SPEC.md', md.markdown({ schema_version: 2, artifact: 'spec', id: spec.id, ...layout,
     requirements: [{ id: 'REQ01', description: 'Add two numbers.' }], acceptance: [acceptance],
   }, '# Addition\n\n## Scope\n\nAdd numbers without unrelated changes.'));
   if (mode !== 'light') {
-    io.write(root, spec.relative + '/TASK.md', md.markdown({ schema_version: 2, artifact: 'tasks', id: spec.id, tasks: [
+    io.write(root, spec.relative + '/TASK.md', md.markdown({ schema_version: 2, artifact: 'tasks', id: spec.id, ...layout, tasks: [
       { id: 'T01', title: 'Implement addition and its regression test.', status: 'done', covers: ['REQ01', 'AC01'], depends_on: [], verify: '2 + 3 is 5 in the unit test.' },
     ] }, '# Tasks'));
   }

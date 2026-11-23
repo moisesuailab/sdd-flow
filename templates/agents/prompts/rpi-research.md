@@ -14,7 +14,7 @@ For a change to existing behavior, inspect direct consumers, shared contracts an
 not only the function being edited. Establish available baseline results; separate pre-existing failures,
 introduced regressions and unavailable-environment checks. Keep the impact note short and source-linked.
 
-Create RESEARCH.md only when research adds useful information. It is required in rigorous mode.
+Use RESEARCH.md created for standard/rigorous specs; create it on demand in light mode. Record actual findings and original sources. If research is unnecessary, state why and set status: not_needed; rigorous requires completed research. Set status: complete after recording findings. A pending template is not research evidence.
 Use front matter with schema_version: 2, artifact: research and id matching the change ID.
 In the body record the goal, relevant evidence, scope, risks and unresolved blocking questions.
 Do not implement code. If a material question blocks planning, ask it while continuing independent investigation.

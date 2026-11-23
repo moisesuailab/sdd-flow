@@ -16,7 +16,7 @@ const HELP = [
   'sdd init [--mode light|standard|rigorous] [--harness claude-code|opencode] [--docs]',
   'sdd docs [--types prd,roadmap,sd,ds,adr] [--dry-run]',
   'sdd new <name> [--mode light|standard|rigorous]',
-  'sdd context <spec> [--phase implement] [--task T01] [--inspect] [--max-bytes N] [--budget-mode warn|strict] [--json]',
+  'sdd context <spec> [--phase implement] [--task T01] [--inspect] [--include-private] [--max-bytes N] [--budget-mode warn|strict] [--json]',
   'sdd skills list | show <name> | migrate [--dry-run]',
   'sdd check <spec> [--phase plan|implement|validate|close] [--final] [--json]',
   'sdd approve <spec> --by <name>',
@@ -34,8 +34,9 @@ const HELP = [
   'sdd reconcile [--dry-run]',
   'sdd status [<spec>] [--all] [--json]',
   'sdd doctor [--json]',
+  'sdd privacy [--staged] [--json]',
   'sdd update [--dry-run] [--replace-managed]',
-  'sdd migrate <spec> [--dry-run]',
+  'sdd migrate <spec> [--readable] [--dry-run]',
   'sdd harness <claude-code|opencode> [--remove] [--dry-run]',
   'sdd export <claude-code|opencode|agent-skills> --out <new-directory>',
   '',
@@ -45,6 +46,9 @@ const HELP = [
 ].join('\n');
 
 const OPTIONS = {
+  'include-private': { type: 'boolean' },
+  readable: { type: 'boolean' },
+  staged: { type: 'boolean' },
   json: { type: 'boolean' }, help: { type: 'boolean', short: 'h' }, version: { type: 'boolean', short: 'v' },
   mode: { type: 'string' }, harness: { type: 'string' }, phase: { type: 'string' }, task: { type: 'string' },
   'max-bytes': { type: 'string' }, 'budget-mode': { type: 'string' }, final: { type: 'boolean' }, by: { type: 'string' },
@@ -57,10 +61,11 @@ const OPTIONS = {
   name: { type: 'string' }, number: { type: 'string' }, permanent: { type: 'boolean' }, all: { type: 'boolean' },
 };
 const ALLOWED = {
-  init: ['mode', 'harness', 'docs'], docs: ['types', 'dry-run'], new: ['mode'], context: ['phase', 'task', 'max-bytes', 'budget-mode', 'inspect'],
+  privacy: ['staged'],
+  init: ['mode', 'harness', 'docs'], docs: ['types', 'dry-run'], new: ['mode'], context: ['phase', 'task', 'max-bytes', 'budget-mode', 'inspect', 'include-private'],
   skills: ['dry-run'], check: ['phase', 'final'], approve: ['by'], evidence: ['out'], handoff: [], verify: ['scope', 'evidence', 'handoff', 'run-external'],
   close: ['by', 'note', 'archive'], reopen: ['by', 'reason'], cancel: ['by', 'reason'],
-  status: ['all'], doctor: [], update: ['dry-run', 'replace-managed'], migrate: ['dry-run'],
+  status: ['all'], doctor: [], update: ['dry-run', 'replace-managed'], migrate: ['dry-run', 'readable'],
   harness: ['remove', 'dry-run'], export: ['out'],
   revise: ['by', 'reason', 'dry-run'],
   rename: ['name', 'number', 'by', 'reason', 'dry-run'],
@@ -77,7 +82,7 @@ async function main(argv = process.argv.slice(2), root = process.cwd()) {
   for (const key of Object.keys(values)) {
     if (key !== 'json' && !ALLOWED[command].includes(key)) throw new Error('--' + key + ' is not supported by ' + command);
   }
-  const maximum = command === 'skills' ? 3 : ['init', 'doctor', 'update', 'docs', 'reconcile'].includes(command) ? 1 : 2;
+  const maximum = command === 'skills' ? 3 : ['init', 'doctor', 'privacy', 'update', 'docs', 'reconcile'].includes(command) ? 1 : 2;
   if (positionals.length > maximum) throw new Error('Unexpected positional arguments');
   const mutating = new Set(['init', 'docs', 'new', 'approve', 'revise', 'evidence', 'handoff', 'verify', 'close', 'reopen', 'cancel', 'update', 'migrate', 'harness', 'export', 'rename', 'archive', 'restore', 'remove', 'reconcile']);
   async function action() {
@@ -103,7 +108,7 @@ async function main(argv = process.argv.slice(2), root = process.cwd()) {
       }
       case 'docs': return require('../lib/documents').scaffold(root, { types: values.types, dryRun: values['dry-run'] });
       case 'new': return project.createSpec(root, first, values.mode);
-      case 'context': return require('../lib/context').context(root, first, { phase: values.phase, task: values.task, maxBytes: values['max-bytes'] ? Number(values['max-bytes']) : undefined, budgetMode: values['budget-mode'], inspect: values.inspect });
+      case 'context': return require('../lib/context').context(root, first, { phase: values.phase, task: values.task, maxBytes: values['max-bytes'] ? Number(values['max-bytes']) : undefined, budgetMode: values['budget-mode'], inspect: values.inspect, includePrivate: values['include-private'] });
       case 'skills': {
         if (first === 'migrate') return installation.migrateSkills(root, { dryRun: values['dry-run'] });
         const catalog = project.skills(root);
@@ -146,10 +151,10 @@ async function main(argv = process.argv.slice(2), root = process.cwd()) {
             fs.renameSync(io.resolve(root, spec.relative), io.resolve(root, target));
             spec.relative = target;
           }
-          const receipt = spec.relative + '/verification.json';
+          const receipt = project.receiptFile(spec);
           if (io.exists(root, receipt)) {
-            fs.mkdirSync(io.resolve(root, spec.relative + '/runs'), { recursive: true });
-            fs.renameSync(io.resolve(root, receipt), io.resolve(root, spec.relative + '/runs/reopened-' + Date.now() + '.json'));
+            fs.mkdirSync(io.resolve(root, spec.relative + '/' + project.internal(spec, 'runs')), { recursive: true });
+            fs.renameSync(io.resolve(root, receipt), io.resolve(root, spec.relative + '/' + project.internal(spec, 'runs/reopened-' + Date.now() + '.json')));
           }
           spec.change.status = 'implementing';
           spec.change.reopened = { by: values.by, reason: values.reason, at: new Date().toISOString() };
@@ -186,14 +191,25 @@ async function main(argv = process.argv.slice(2), root = process.cwd()) {
         return result;
       }
       case 'doctor': return installation.doctor(root);
+      case 'privacy': return require('../lib/privacy').scan(root, { staged: values.staged });
       case 'update': return installation.install(root, { update: true, dryRun: values['dry-run'], replaceManaged: values['replace-managed'] });
-      case 'migrate': return installation.migrate(root, first, { dryRun: values['dry-run'] });
+      case 'migrate': return installation.migrate(root, first, { dryRun: values['dry-run'], readable: values.readable });
       case 'harness': return adapters.harness(root, first, { remove: values.remove, dryRun: values['dry-run'] });
       case 'export': return adapters.exportBundle(root, first, values.out);
     }
   }
   const writes = mutating.has(command) || (command === 'skills' && first === 'migrate');
-  const result = await (writes && !values['dry-run'] ? io.locked(root, action) : action());
+  const privacy = require('../lib/privacy');
+  const observed = await privacy.collect(root, () => writes && !values['dry-run'] ? io.locked(root, action) : action());
+  const result = privacy.sanitize(observed.result);
+  if (observed.warnings.length) {
+    const warnings = privacy.sanitize(observed.warnings);
+    if (result && !Array.isArray(result) && typeof result === 'object') result.privacy_warnings = warnings;
+    console.error('SDD privacy warnings (local work continued): ' + JSON.stringify(warnings));
+  }
+  if (command === 'context' && values.json && Array.isArray(result.entries)) {
+    result.entries = result.entries.map(({ content, ...entry }) => ({ ...entry, bytes: Buffer.byteLength(content) }));
+  }
   if (!values.json && typeof result.content === 'string') console.log(result.content);
   else console.log(JSON.stringify(result, null, 2));
   if (result.valid === false || result.verdict === 'failed' || result.conflicts?.length) return 1;
@@ -203,7 +219,8 @@ async function main(argv = process.argv.slice(2), root = process.cwd()) {
 
 if (require.main === module) {
   main().then(code => { process.exitCode = code; }).catch(error => {
-    if (process.argv.includes('--json')) console.log(JSON.stringify({ error: error.message, ...(error.code && { code: error.code }), ...(error.diagnostics && { diagnostics: error.diagnostics }) }));
+    error.message = require('../lib/privacy').redact(error.message);
+    if (process.argv.includes('--json')) console.log(JSON.stringify(require('../lib/privacy').sanitize({ error: error.message, ...(error.code && { code: error.code }), ...(error.diagnostics && { diagnostics: error.diagnostics }) })));
     else console.error('SDD: ' + error.message);
     process.exitCode = 1;
   });
