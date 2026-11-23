@@ -9,6 +9,15 @@ const project = require('../lib/project');
 const { context } = require('../lib/context');
 const { fixture, editConfig, editMarkdown, cli } = require('../test-support/project');
 
+test('shipped rules and intake require confirming a new spec before creating it, without treating creation as approval', () => {
+  const rules = fs.readFileSync(require('node:path').join(__dirname, '..', 'templates/agents/RULES.md'), 'utf8');
+  const intake = fs.readFileSync(require('node:path').join(__dirname, '..', 'templates/agents/prompts/intake.md'), 'utf8');
+  assert.match(rules, /Confirm a new spec's name and scope[^.]*before creating it/);
+  assert.match(rules, /creation never approves implementation scope/);
+  assert.match(intake, /wait for confirmation unless creation is already authorized/);
+  assert.match(intake, /treat creation as scope approval/);
+});
+
 test('documentation language is optional for existing configurations and validates locale tags', t => {
   const { root } = fixture(t);
   editConfig(root, cfg => { delete cfg.documentation; });

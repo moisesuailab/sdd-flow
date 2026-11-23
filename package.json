@@ -1,6 +1,6 @@
 {
   "name": "sdd-flow",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Portable spec-driven workflow with bounded context and evidence-based verification",
   "bin": {
     "sdd-cli": "bin/cli.js",

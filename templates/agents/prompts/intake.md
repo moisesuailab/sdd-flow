@@ -9,7 +9,9 @@ description: Turn a broad request into manageable, linked outcomes before implem
 1. Identify whether this is a new project, adoption of an existing codebase, a scoped change, or a revision.
 2. Preserve original sources. Inspect an index or relevant sections before loading long documents.
 3. Find a cohesive observable outcome for the next iteration. Propose separate specs for independent
-   deliverables, meaningful domain boundaries or uncertainty that should be resolved separately.
+   deliverables, meaningful domain boundaries or uncertainty that should be resolved separately. Present the proposed name and brief scope of each
+   needed new spec and wait for confirmation unless creation is already authorized, including a bounded set
+   of specs requested by the user. Do not repeat that confirmation or treat creation as scope approval.
 4. Share lasting constraints through current capability contracts and project policies instead of copying
    them into every spec. Record real dependencies in change.yaml.
 5. Use sdd context ID --inspect to diagnose the composed packet. This measures bytes of the selected

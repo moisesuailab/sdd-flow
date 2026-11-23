@@ -6,7 +6,7 @@ description: Essential constraints for scoped, verifiable software changes.
 
 # Essential rules
 
-1. Define observable requirements and acceptance before meaningful implementation. Use the configured mode.
+1. Define observable requirements and acceptance before meaningful implementation. Use the configured mode. Confirm a new spec's name and scope with the user before creating it, unless already authorized (see prompts/intake.md); creation never approves implementation scope.
 2. Respect actual user authorization and tool permissions. Record scope approval only after the user authorizes that scope; do not invent reviewers or approvals.
 3. Implement cohesive, verifiable outcomes with their tests. A task may touch several files. Avoid unrelated refactoring and speculative abstractions.
 4. Use config.yaml autonomy as the standing default: step reviews one task at a time; batch continues through authorized tasks. Actual user authorization to execute named tasks or all tasks overrides step for that bounded request; do not stop between those tasks or ask again for unchanged authorization. Continue verifying each task and respecting dependencies. Permission to execute several tasks is not permission to expand scope or bypass tool controls. Routine technical choices inside authorized scope may proceed; changes to requirements or scope require an explicit revised plan.

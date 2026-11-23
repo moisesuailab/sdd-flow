@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.2 — 2026-11-23
+
+- Agents now confirm a new spec's name and scope before creating it (unless creation is already authorized, including a bounded set the user requested). Creating a spec never approves its implementation scope. Guidance only: the CLI does not enforce it, and `sdd update` delivers it through the managed RULES.md and intake prompt.
+
 ## 3.0.1 — 2026-11-23
 
 - Create lean spec/research/task skeletons without filling instructions or marker legends; keep drafting guidance in phase prompts and clean drafts before approval without rewriting existing specs.
